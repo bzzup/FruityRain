@@ -10,7 +10,7 @@ import org.andengine.util.color.Color;
 public class MainMenu extends MenuScene implements IOnMenuItemClickListener {
 
 	Main activity;
-	PhysicsScene gameScene;
+	GameScene gameScene;
 
 	public MainMenu() {
 		super(Main.getInstance().mCamera);
@@ -35,15 +35,15 @@ public class MainMenu extends MenuScene implements IOnMenuItemClickListener {
 			float pMenuItemLocalX, float pMenuItemLocalY) {
 		switch (pMenuItem.getID()) {
 		case 0:
-			activity.setCurrentScene(new PhysicsScene());
+			activity.setCurrentScene(new GameScene());
 			break;
 		case 1:
 		{
 			if (gameScene == null) {
-				gameScene = new PhysicsScene();
+				gameScene = new GameScene();
 				activity.setCurrentScene(gameScene);
 			}
-			activity.setCurrentScene(new PhysicsScene());
+			activity.setCurrentScene(new GameScene());
 		}	break;
 		default:
 			break;

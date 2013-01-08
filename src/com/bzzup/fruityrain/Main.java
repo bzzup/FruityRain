@@ -22,12 +22,15 @@ import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Handler.Callback;
 import android.view.KeyEvent;
 
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
-public class Main extends SimpleBaseGameActivity implements
-		IOnSceneTouchListener {
+public class Main extends SimpleBaseGameActivity implements IOnSceneTouchListener {
 
 	public static Main instance;
 
@@ -42,9 +45,12 @@ public class Main extends SimpleBaseGameActivity implements
 	public Font mFont;
 	public Camera mCamera;
 	public int test;
-		
-	public static final FixtureDef FIXTURE_DEF = PhysicsFactory
-			.createFixtureDef(1, 0.5f, 0.5f);
+	Handler handler;
+	
+	private final int HANDLER_DROP = 1; // sec
+	private int dropSpeed = 1; // sec
+
+	public static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
 	public static Main getInstance() {
 		return instance;
@@ -54,10 +60,8 @@ public class Main extends SimpleBaseGameActivity implements
 	public EngineOptions onCreateEngineOptions() {
 		instance = this;
 		mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-		RatioResolutionPolicy resolution = new RatioResolutionPolicy(
-				CAMERA_WIDTH, CAMERA_HEIGHT);
-		final EngineOptions eOptions = new EngineOptions(true,
-				ScreenOrientation.PORTRAIT_FIXED, resolution, mCamera);
+		RatioResolutionPolicy resolution = new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT);
+		final EngineOptions eOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, resolution, mCamera);
 		return eOptions;
 	}
 
@@ -121,9 +125,8 @@ public class Main extends SimpleBaseGameActivity implements
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK
-				&& event.getAction() == KeyEvent.ACTION_DOWN) {
-			if (mCurrentScene.getClass() == PhysicsScene.class) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+			if (mCurrentScene.getClass() == GameScene.class) {
 				this.setCurrentScene(new MainMenu());
 			}
 		}
@@ -190,17 +193,12 @@ public class Main extends SimpleBaseGameActivity implements
 	@Override
 	protected void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		mTextureAtlas = new BitmapTextureAtlas(getTextureManager(), 64, 128,
-				TextureOptions.BILINEAR);
-		mCircleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(mTextureAtlas,
-						this, "face_circle_tiled.png", 0, 32, 2, 1);
+		mTextureAtlas = new BitmapTextureAtlas(getTextureManager(), 64, 128, TextureOptions.BILINEAR);
+		mCircleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, this, "face_circle_tiled.png", 0, 32, 2, 1);
 		mTextureAtlas.load();
-		
-		mFont = FontFactory.create(getFontManager(), getTextureManager(), 256,
-				256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
-		mFont.load();
 
+		mFont = FontFactory.create(getFontManager(), getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		mFont.load();
 	}
 
 	@Override
@@ -209,4 +207,5 @@ public class Main extends SimpleBaseGameActivity implements
 		return mCurrentScene;
 	}
 
+	
 }

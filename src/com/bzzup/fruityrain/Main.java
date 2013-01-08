@@ -41,7 +41,8 @@ public class Main extends SimpleBaseGameActivity implements
 	public Scene mCurrentScene;
 	public Font mFont;
 	public Camera mCamera;
-
+	public int test;
+		
 	public static final FixtureDef FIXTURE_DEF = PhysicsFactory
 			.createFixtureDef(1, 0.5f, 0.5f);
 

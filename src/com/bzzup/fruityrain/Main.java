@@ -206,6 +206,6 @@ public class Main extends SimpleBaseGameActivity implements IOnSceneTouchListene
 		setCurrentScene(new SplashScreen());
 		return mCurrentScene;
 	}
-
+	
 	
 }

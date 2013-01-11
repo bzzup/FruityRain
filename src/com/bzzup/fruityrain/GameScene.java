@@ -33,12 +33,13 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 
 	private float dropSpeed = 1f; // sec
 
-	public GameScene gameScene;
+	private static GameScene gameScene;
 	private Camera mCamera;
 	private PhysicsWorld mWorld;
 	private Main mainActivity;
+	private BaloonPlayer player;
 
-	public GameScene getInstance() {
+	public static GameScene getInstance() {
 		if (gameScene == null) {
 			gameScene = new GameScene();
 		}
@@ -47,6 +48,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 
 	public GameScene() {
 		mainActivity = Main.getInstance();
+		gameScene = this;
 		this.setBackground(new Background(Color.BLACK));
 		mWorld = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
 		this.setOnSceneTouchListener(this);
@@ -72,25 +74,25 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 
 		setTouchAreaBindingOnActionDownEnabled(true);
 		setTouchAreaBindingOnActionMoveEnabled(true);
-		
+
 		this.registerUpdateHandler(sceneUpdateHandler);
-		
+
 		this.registerUpdateHandler(this.mWorld);
-		createFaceWithPeriod();
+		addFaceAtRandomPosition();
 	}
-	
+
 	IUpdateHandler sceneUpdateHandler = new IUpdateHandler() {
-		
+
 		@Override
 		public void reset() {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 		@Override
 		public void onUpdate(float pSecondsElapsed) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	};
 
@@ -98,8 +100,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
 		if (this.mWorld != null) {
 			if (pSceneTouchEvent.isActionDown()) {
-				// this.addFace(pSceneTouchEvent.getX(),
-				// pSceneTouchEvent.getY());
+				player.applyForce(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
 				return true;
 			}
 		}
@@ -107,14 +108,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	}
 
 	private void addFace(final float pX, final float pY) {
-		// this.mFaceCount++;
-		// Debug.d("Faces: " + this.mFaceCount);
-
-		final AnimatedSprite face;
-		final Body body;
-
-		face = new AnimatedSprite(pX, pY, mainActivity.mCircleFaceTextureRegion, mainActivity.getVertexBufferObjectManager());
-		body = PhysicsFactory.createCircleBody(mWorld, face, BodyType.DynamicBody, mainActivity.FIXTURE_DEF);
+		BaloonPlayer mBaloon = new BaloonPlayer(pX, pY, mainActivity.mCircleFaceTextureRegion, mainActivity.getVertexBufferObjectManager(), mWorld);
 
 		// if(this.mFaceCount % 4 == 0) {
 		// face = new AnimatedSprite(pX, pY, this.mBoxFaceTextureRegion,
@@ -137,12 +131,6 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		// body = MainActivity.createHexagonBody(this.mPhysicsWorld, face,
 		// BodyType.DynamicBody, FIXTURE_DEF);
 		// }
-
-		face.animate(200);
-		this.registerTouchArea(face);
-		this.attachChild(face);
-		this.mWorld.registerPhysicsConnector(new PhysicsConnector(face, body, true, true));
-
 	}
 
 	private void createFaceWithPeriod() {
@@ -159,34 +147,29 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	}
 
 	private void addFaceAtRandomPosition() {
-		final Ball face;
-//		final Body body;
-		
-		face = new Ball(new Random().nextInt(mainActivity.CAMERA_WIDTH - 10) + 5, 10, mainActivity.mCircleFaceTextureRegion, mainActivity.getVertexBufferObjectManager(), mWorld);
-//		{
-//
-//			@Override
-//			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-//				moveToXY(this, pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
-//				return true;
-//			};
-//
-//		};
+//		final BaloonPlayer face;
+		// final Body body;
 
-//		body = PhysicsFactory.createCircleBody(mWorld, face, BodyType.DynamicBody, Main.FIXTURE_DEF);
-//		face.animate(200);
+		player = new BaloonPlayer(200, 200, mainActivity.mCircleFaceTextureRegion, mainActivity.getVertexBufferObjectManager(), mWorld);
+		// {
+		//
+		// @Override
+		// public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float
+		// pTouchAreaLocalX, float pTouchAreaLocalY) {
+		// moveToXY(this, pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+		// return true;
+		// };
+		//
+		// };
 
-		
-		this.mWorld.registerPhysicsConnector(new PhysicsConnector(face, face.getBody(), true, true));
-		this.registerTouchArea(face);
-		this.setTouchAreaBindingOnActionDownEnabled(true);
-		this.setTouchAreaBindingOnActionMoveEnabled(true);
-		this.attachChild(face);
+		// body = PhysicsFactory.createCircleBody(mWorld, face,
+		// BodyType.DynamicBody, Main.FIXTURE_DEF);
+		// face.animate(200);
 	}
-	
-	private void removeBall(final Ball iBall) {
+
+	private void removeBall(final BaloonPlayer iBall) {
 		mainActivity.runOnUpdateThread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				PhysicsConnector physConnector = mWorld.getPhysicsConnectorManager().findPhysicsConnectorByShape(iBall);
@@ -196,21 +179,24 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 			}
 		});
 	}
-	
-	private void explode(final Ball iBall) {
+
+	private void explode(final BaloonPlayer iBall) {
 		iBall.registerEntityModifier(new ScaleModifier(0.2f, 1, 2) {
-			
+
 			@Override
 			protected void onModifierFinished(IEntity pItem) {
 				removeBall(iBall);
 				super.onModifierFinished(pItem);
 			}
-		}); 
+		});
 	}
 	
-//	private void moveToXY(final Ball iBall, float x, float y) {
-//		iBall.setPosition(x - iBall.getWidth()/2, y - iBall.getHeight()/2);
-//	}
-	
-		
+	public PhysicsWorld getWorld() {
+		return this.mWorld;
+	}
+
+	// private void moveToXY(final Ball iBall, float x, float y) {
+	// iBall.setPosition(x - iBall.getWidth()/2, y - iBall.getHeight()/2);
+	// }
+
 }

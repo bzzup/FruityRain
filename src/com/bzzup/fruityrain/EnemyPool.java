@@ -12,7 +12,9 @@ public class EnemyPool extends GenericPool<Enemy> {
 
 	@Override
 	protected Enemy onAllocatePoolItem() {
-		return new Enemy(GameLevels.level1.getStartPoint().x, GameLevels.level1.getStartPoint().y, mTextureRegion, mainActivity.getVertexBufferObjectManager(), world);
+		return new Enemy(GameLevels.level1.getStartPoint().x, GameLevels.level1.getStartPoint().y, mTextureRegion, 
+				ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(),
+				world);
 	}
 
 	public EnemyPool(ITiledTextureRegion region, PhysicsWorld pWorld) {
@@ -21,7 +23,7 @@ public class EnemyPool extends GenericPool<Enemy> {
 			// TextureRegion
 			throw new IllegalArgumentException("The texture region must not be NULL");
 		}
-		mainActivity = Main.getInstance();
+		// mainActivity = Main.getInstance();
 		this.mTextureRegion = region;
 		this.world = pWorld;
 	}

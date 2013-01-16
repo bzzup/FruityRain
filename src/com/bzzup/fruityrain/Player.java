@@ -142,8 +142,8 @@ public class Player extends AnimatedSprite {
 			fireLine = null;
 		}
 		mEnemy.hit(damage);
-		fireLine = new FireLine(getMyCoordinates().x + 10, getMyCoordinates().y + 10, mEnemy.getMyCoordinates().x + 15, mEnemy.getMyCoordinates().y + 15, Main.getInstance()
-				.getVertexBufferObjectManager());
+//		fireLine = new FireLine(getMyCoordinates().x + 10, getMyCoordinates().y + 10, mEnemy.getMyCoordinates().x + 15, mEnemy.getMyCoordinates().y + 15, Main.getInstance()
+//				.getVertexBufferObjectManager());
 		fireLine.setColor(Color.WHITE);
 		GameScene.getInstance().attachChild(fireLine);
 	}

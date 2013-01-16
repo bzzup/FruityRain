@@ -13,7 +13,7 @@ private Main mainActivity;
 	
 	public SplashScreen() {
 		setBackground(new Background(0.09804f, 0.6274f, 0));
-		mainActivity = Main.getInstance();
+//		mainActivity = Main.getInstance();
 		Text title = new Text(0, 0, mainActivity.mFont, "Splash!", mainActivity.getVertexBufferObjectManager());
 		title.setPosition(-title.getWidth(), mainActivity.CAMERA_HEIGHT / 2);
 		attachChild(title);
@@ -25,7 +25,7 @@ private Main mainActivity;
 	
 	DelayModifier mod = new DelayModifier(2) {
 		protected void onModifierFinished(IEntity pItem) {
-			mainActivity.setCurrentScene(new MainMenu());
+//			mainActivity.setCurrentScene(new MainMenu());
 		};
 	};
 	

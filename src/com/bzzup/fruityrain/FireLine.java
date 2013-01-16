@@ -14,7 +14,7 @@ public class FireLine extends Line {
 	}
 	
 	public FireLine(Player player, Enemy enemy) {
-		super(player.getMyCoordinates().x + 10, player.getMyCoordinates().y + 10, enemy.getMyCoordinates().x, enemy.getMyCoordinates().y, Main.getInstance().getVertexBufferObjectManager());
+		super(player.getMyCoordinates().x + 10, player.getMyCoordinates().y + 10, enemy.getMyCoordinates().x, enemy.getMyCoordinates().y, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager());
 		this.line = this;
 	}
 	

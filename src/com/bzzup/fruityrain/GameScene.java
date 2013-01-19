@@ -2,7 +2,6 @@ package com.bzzup.fruityrain;
 
 import java.util.ArrayList;
 
-import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -10,7 +9,6 @@ import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
-import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnectorManager;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
@@ -27,6 +25,14 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.bzzup.fruityrain.StateManager.StateType;
+import com.bzzup.fruityrain.bullet.Bullet;
+import com.bzzup.fruityrain.enemy.Enemy;
+import com.bzzup.fruityrain.ship.Ship;
+import com.bzzup.fruityrain.ship.ShipBattlecruiser;
+import com.bzzup.fruityrain.ship.ShipDictionary;
+import com.bzzup.fruityrain.ship.ShipFighter;
+import com.bzzup.fruityrain.ship.ShipDictionary.Fighter;
 
 public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHandler {
 
@@ -36,12 +42,10 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	private final float touchArea = 100;
 
 	private static GameScene gameScene;
-	private Camera mCamera;
 	private PhysicsWorld mWorld;
 	private Main mainActivity;
-	private Player player;
 	public ArrayList<Enemy> enemiesList = new ArrayList<Enemy>();
-	public ArrayList<Player> playersList = new ArrayList<Player>();
+	public ArrayList<Ship> players = new ArrayList<Ship>();
 
 	private float mGravityX;
 	private float mGravityY;
@@ -49,9 +53,6 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	private static EnemyPool enemyPool;
 
 	public static GameScene getInstance() {
-		// if (gameScene == null) {
-		// gameScene = new GameScene();
-		// }
 		return gameScene;
 	}
 
@@ -59,21 +60,16 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		this.mainActivity = mainActivity;
 		gameScene = this;
 		this.gameHud = new GameHUD();
-
+		this.mWorld = new PhysicsWorld(new Vector2(0, 0), false);
 		this.setBackground(new Background(Color.BLACK));
-		mWorld = new PhysicsWorld(new Vector2(0, 0), false);
-		// mWorld.setContactListener(mContactListener);
+
+		 mWorld.setContactListener(mContactListener);
 		this.setOnSceneTouchListener(this);
 		setTouchAreaBindingOnActionDownEnabled(true);
 		setTouchAreaBindingOnActionMoveEnabled(true);
 		this.registerUpdateHandler(sceneUpdateHandler);
 		this.registerUpdateHandler(this.mWorld);
-
-		addPlayerAtPosition(300, 300);
-		addPlayerAtPosition(350, 350);
-		addPlayerAtPosition(250, 250);
-		createEnemiesWithPeriod();
-		enemyPool = new EnemyPool(ResourceManager.getInstance().baloonEnemy, this.mWorld);
+		enemyPool = new EnemyPool(ResourceManager.getInstance().baloonEnemy, this);
 	}
 
 	ContactListener mContactListener = new ContactListener() {
@@ -97,29 +93,36 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 
 		@Override
 		public void beginContact(Contact contact) {
-			Fixture a = contact.getFixtureA();
-			Fixture b = contact.getFixtureB();
-			if ((a.getBody().getUserData() == "enemy") && (b.getBody().getUserData() == "player")) {
-				removeBody(a.getBody());
-			}
-			if ((a.getBody().getUserData() == "player") && (b.getBody().getUserData() == "enemy")) {
-				removeBody(b.getBody());
-			}
+//			Fixture a = contact.getFixtureA();
+//			Fixture b = contact.getFixtureB();
+//			Object objectA = a.getBody().getUserData();
+//			Object objectB = b.getBody().getUserData();
+//			if (objectA instanceof Bullet) {
+//				((Bullet) objectA).inactivate();
+//			}
+//			if (objectB instanceof Bullet) {
+//				((Bullet) objectB).inactivate();
+//			}
+//			
+//			if ((a.getBody().getUserData() == "bullet") || (b.getBody().getUserData() == "bullet")) {
+//				removeBody(a.getBody());
+//
+//			}
+			
 		}
 	};
 
 	private void createWalls() {
-		final VertexBufferObjectManager vertexBufferObjectManager = mainActivity.getVertexBufferObjectManager();
-		final Rectangle ground = new Rectangle(0, mainActivity.CAMERA_HEIGHT - 5, mainActivity.CAMERA_WIDTH, 5, vertexBufferObjectManager);
-		final Rectangle roof = new Rectangle(0, 0, mainActivity.CAMERA_WIDTH, 5, vertexBufferObjectManager);
-		final Rectangle left = new Rectangle(0, 0, 5, mainActivity.CAMERA_HEIGHT, vertexBufferObjectManager);
-		final Rectangle right_top = new Rectangle(mainActivity.CAMERA_WIDTH - 5, 0, 5, mainActivity.CAMERA_HEIGHT, vertexBufferObjectManager);
+		final VertexBufferObjectManager vertexBufferObjectManager = ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager();
+		final Rectangle ground = new Rectangle(0, EngineOptionsManager.getInstance().CAMERA_HEIGHT - 5, EngineOptionsManager.getInstance().CAMERA_WIDTH, 5, vertexBufferObjectManager);
+		final Rectangle roof = new Rectangle(0, 0, EngineOptionsManager.getInstance().CAMERA_WIDTH, 5, vertexBufferObjectManager);
+		final Rectangle left = new Rectangle(0, 0, 5, EngineOptionsManager.getInstance().CAMERA_HEIGHT, vertexBufferObjectManager);
+		final Rectangle right_top = new Rectangle(EngineOptionsManager.getInstance().CAMERA_WIDTH - 5, 0, 5, EngineOptionsManager.getInstance().CAMERA_HEIGHT, vertexBufferObjectManager);
 
-		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
-		PhysicsFactory.createBoxBody(this.mWorld, ground, BodyType.StaticBody, wallFixtureDef);
-		PhysicsFactory.createBoxBody(this.mWorld, roof, BodyType.StaticBody, wallFixtureDef);
-		PhysicsFactory.createBoxBody(this.mWorld, left, BodyType.StaticBody, wallFixtureDef);
-		PhysicsFactory.createBoxBody(this.mWorld, right_top, BodyType.StaticBody, wallFixtureDef);
+		PhysicsFactory.createBoxBody(this.mWorld, ground, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL).setUserData("wall");
+		PhysicsFactory.createBoxBody(this.mWorld, roof, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL).setUserData("wall");
+		PhysicsFactory.createBoxBody(this.mWorld, left, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL).setUserData("wall");
+		PhysicsFactory.createBoxBody(this.mWorld, right_top, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL).setUserData("wall");
 
 		this.attachChild(ground);
 		this.attachChild(roof);
@@ -152,9 +155,11 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
 		if (this.mWorld != null) {
 			if (pSceneTouchEvent.isActionDown()) {
-				for (Player iPlayer : playersList) {
-					if ((Utils.Distance.calculateDistance(iPlayer.getMyCoordinates(), new Vector2(pSceneTouchEvent.getX(), pSceneTouchEvent.getY()))) < this.touchArea) {
-						iPlayer.applyForce(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+				for (Ship player : this.players) {
+					if ((Utils.Distance.calculateDistance(player.getCoordinates(), new Vector2(pSceneTouchEvent.getX(), pSceneTouchEvent.getY()))) < this.touchArea) {
+						// iPlayer.applyForce(pSceneTouchEvent.getX(),
+						// pSceneTouchEvent.getY());
+						player.reactOnTouchWave(new Vector2(pSceneTouchEvent.getX(), pSceneTouchEvent.getY()));
 					}
 				}
 				return true;
@@ -170,23 +175,23 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 
 			@Override
 			public void onTimePassed(TimerHandler pTimerHandler) {
-				Enemy iEnemy = enemyPool.obtainPoolItem();
+//				Enemy iEnemy = enemyPool.obtainPoolItem();
+				Enemy iEnemy = new Enemy(GameLevels.level1.getStartPoint().x, GameLevels.level1.getStartPoint().y, ResourceManager.getInstance().baloonPlayer, 
+						ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(),
+						GameScene.getInstance());
 				iEnemy.startMoving(GameLevels.level1.getTraectory(), GameLevels.level1.getTime());
 			}
 		});
-		mainActivity.getEngine().registerUpdateHandler(timeHandler);
+//		mainActivity.getEngine().registerUpdateHandler(timeHandler);
+		ResourceManager.getInstance().getActivityReference().getEngine().registerUpdateHandler(timeHandler);
 	}
 
 	public void addEnemyToTheWorld(Enemy mEnemy) {
 		enemiesList.add(mEnemy);
 	}
 
-	public void addPlayerToTheWorld(Player mPlayer) {
-		playersList.add(mPlayer);
-	}
-
-	private void addPlayerAtPosition(float x, float y) {
-		player = new Player(x, y, ResourceManager.getInstance().baloonPlayer, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager());
+	public void addPlayerToTheWorld(Ship mPlayer) {
+		players.add(mPlayer);
 	}
 
 	private void removeBody(final Body mBody) {
@@ -196,7 +201,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 			public void run() {
 				PhysicsConnectorManager connectorManager = mWorld.getPhysicsConnectorManager();
 				// Body enemy = connectorManager.
-				mWorld.destroyBody(mBody);
+//				mWorld.destroyBody(mBody);
 			}
 		});
 	}
@@ -209,12 +214,8 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		return this.enemiesList;
 	}
 
-	public ArrayList<Player> getAllPlayers() {
-		return this.playersList;
-	}
-
-	public void addItemToGameShop(AnimatedSprite aItem) {
-
+	public ArrayList<Ship> getAllPlayers() {
+		return this.players;
 	}
 
 	public void prepareSceneForIntro() {
@@ -230,7 +231,10 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	}
 
 	public void prepareSceneForPlay() {
-
+		addShip(300, 300, ShipDictionary.ShipTypes.FIGHTER);
+		addShip(400, 400, ShipDictionary.ShipTypes.CRUISER);
+		createEnemiesWithPeriod();
+		createWalls();
 		// this.attachChild(choppaJoe.getAnimatedSprite());
 		// this.setChildScene(choppaJoeControlla.getAnalogOnScreenControl());
 		EngineOptionsManager.getInstance().getCamera().setHUD(gameHud.getHud());
@@ -242,6 +246,21 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		this.clearChildScene();
 		// choppaJoe.getScaleModifier().reset();
 		EngineOptionsManager.getInstance().getCamera().setHUD(null);
+	}
+
+	private void addShip(float x, float y, int type) {
+		switch (type) {
+		case ShipDictionary.ShipTypes.FIGHTER: {
+			players.add(new ShipFighter(x, y, this));
+		}
+			break;
+		case ShipDictionary.ShipTypes.CRUISER: {
+			players.add(new ShipBattlecruiser(x, y, this));
+		}
+			break;
+		default:
+			break;
+		}
 	}
 
 }

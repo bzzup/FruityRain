@@ -11,22 +11,23 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.bzzup.fruityrain.ship.Ship;
 
-public class Enemy extends AnimatedSprite {
+public class Enemyold extends AnimatedSprite {
 	
 	private Body body;
 	private float speed;
 	private float health = 500f; 
 	private boolean isUnderAttack = false;
 	private boolean alive = true;
-	private Enemy me; 
+	private Enemyold me; 
 
-	public Enemy(float pX, float pY, ITiledTextureRegion pTiledTextureRegion, VertexBufferObjectManager pVertexBufferObjectManager) {
+	public Enemyold(float pX, float pY, ITiledTextureRegion pTiledTextureRegion, VertexBufferObjectManager pVertexBufferObjectManager) {
 		super(pX, pY, pTiledTextureRegion, pVertexBufferObjectManager);
 
 	}
 
-	public Enemy(float pX, float pY, ITiledTextureRegion pTiledTextureRegion, VertexBufferObjectManager pVertexBufferObjectManager, PhysicsWorld pWorld) {
+	public Enemyold(float pX, float pY, ITiledTextureRegion pTiledTextureRegion, VertexBufferObjectManager pVertexBufferObjectManager, PhysicsWorld pWorld) {
 		super(pX, pY, pTiledTextureRegion, pVertexBufferObjectManager);
 		this.me = this;
 		this.animate(200);
@@ -39,7 +40,7 @@ public class Enemy extends AnimatedSprite {
 		scene.attachChild(this);
 		this.setStartSpeed(0.5f);
 		
-		GameScene.getInstance().addEnemyToTheWorld(this);
+//		GameScene.getInstance().addEnemyToTheWorld(this);
 	}
 	
 	@Override
@@ -74,9 +75,13 @@ public class Enemy extends AnimatedSprite {
 		return new Vector2(this.getX(), this.getY());
 	}
 	
-	public float getDistance(Player player) {
-		return (float) Math.sqrt((Math.pow(Math.abs(player.getMyCoordinates().x - this.getMyCoordinates().x), 2) + Math.pow(Math.abs(player.getMyCoordinates().y - this.getMyCoordinates().y), 2)));
-	}
+//	public float getDistance(Ship ship) {
+//		return (float) Math.sqrt((Math.pow(Math.abs(ship.getCoordinates().x - this.getMyCoordinates().x), 2) + Math.pow(Math.abs(ship.getCoordinates().y - this.getMyCoordinates().y), 2)));
+//	}
+//	
+//	public float getDistance(Ship player) {
+//		return (float) Math.sqrt((Math.pow(Math.abs(player.getCoordinates().x - this.getMyCoordinates().x), 2) + Math.pow(Math.abs(player.getCoordinates().y - this.getMyCoordinates().y), 2)));
+//	}
 	
 	public void attack(boolean attack) {
 		this.isUnderAttack = attack;

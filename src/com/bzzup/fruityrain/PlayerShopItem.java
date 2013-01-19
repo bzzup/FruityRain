@@ -16,7 +16,7 @@ public class PlayerShopItem extends AnimatedSprite {
 		scene.registerTouchArea(this);
 //		scene.getWorld().registerPhysicsConnector(new PhysicsConnector(this, body, true, true));
 		scene.attachChild(this);
-		GameScene.getInstance().addItemToGameShop(this);
+//		GameScene.getInstance().addItemToGameShop(this);
 //		coolDown = new ShootingCoolDown(200);
 //		moveCoolDown = new MovementCoolDown(1000);
 	}

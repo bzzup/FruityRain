@@ -7,6 +7,7 @@ import org.andengine.audio.music.MusicFactory;
 import org.andengine.audio.music.MusicManager;
 import org.andengine.engine.options.MusicOptions;
 import org.andengine.entity.scene.background.RepeatingSpriteBackground;
+import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.opengl.font.BitmapFont;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
@@ -22,6 +23,8 @@ import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.util.debug.Debug;
+
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 public class ResourceManager {
 	private static ResourceManager instance;
@@ -89,6 +92,17 @@ public class ResourceManager {
 	public TiledTextureRegion baloonPlayer;
 	public TiledTextureRegion baloonEnemy;
 	
+	//Physics staff
+	public FixtureDef FIXTURE_DEF_SHIP;
+	public FixtureDef FIXTURE_DEF_BULLET;
+	public FixtureDef FIXTURE_DEF_ENEMY;
+	public FixtureDef FIXTURE_DEF_WALL;
+	
+	final short CATEGORY_SHIP = 0x0001;  // 0000000000000001 in binary
+	final short CATEGORY_BULLET = 0x0002; // 0000000000000010 in binary
+	final short CATEGORY_ENEMY = 0x0004; // 0000000000000100 in binary
+	final short CATEGORY_WALL = 0x0008; // 0000000000000100 in binary
+	
 	// constructor
 	private ResourceManager(Main activityReference) {
 		this.activityReference = activityReference;
@@ -96,9 +110,34 @@ public class ResourceManager {
 		loadFonts();
 		loadTextures();
 		loadMusic();
-
+		loadPhysics();
+		
 	}
 
+	
+	private void loadPhysics() {
+		final short MASK_SHIP = CATEGORY_ENEMY + CATEGORY_WALL; 
+		final short MASK_BULLET =  CATEGORY_ENEMY + CATEGORY_WALL;
+		final short MASK_ENEMY = CATEGORY_BULLET + CATEGORY_SHIP + CATEGORY_WALL; 
+		final short MASK_WALL = -1; 
+		
+		FIXTURE_DEF_SHIP = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+		FIXTURE_DEF_SHIP.filter.categoryBits = CATEGORY_SHIP;
+		FIXTURE_DEF_SHIP.filter.maskBits = MASK_SHIP;
+		
+		FIXTURE_DEF_BULLET = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+		FIXTURE_DEF_BULLET.filter.categoryBits = CATEGORY_BULLET;
+		FIXTURE_DEF_BULLET.filter.maskBits = MASK_BULLET;
+		
+		FIXTURE_DEF_ENEMY = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+		FIXTURE_DEF_ENEMY.filter.categoryBits = CATEGORY_ENEMY;
+		FIXTURE_DEF_ENEMY.filter.maskBits = MASK_ENEMY;
+		
+		FIXTURE_DEF_WALL = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+		FIXTURE_DEF_WALL.filter.categoryBits = CATEGORY_WALL;
+		FIXTURE_DEF_WALL.filter.maskBits = MASK_WALL;
+	}
+	
 	private void loadFonts() {
 
 		final ITexture droidFontTexture = new BitmapTextureAtlas(activityReference.getTextureManager(), 256, 256, TextureOptions.BILINEAR);

@@ -34,7 +34,7 @@ public class MenuSelectionState extends State implements IOnMenuItemClickListene
 
 		@Override
 		public void begin() {
-			ResourceManager.getInstance().playMenuMusic();
+//			ResourceManager.getInstance().playMenuMusic();
 
 	    	//trigger scene change at the engine level
 	    	activityReference.getEngine().setScene(menuSelectionScene);
@@ -46,7 +46,7 @@ public class MenuSelectionState extends State implements IOnMenuItemClickListene
 
 		@Override
 		public void end() {
-			ResourceManager.getInstance().stopMenuMusic();
+//			ResourceManager.getInstance().stopMenuMusic();
 
 			menuSelectionScene.cleanupAfterMenu();
 		}

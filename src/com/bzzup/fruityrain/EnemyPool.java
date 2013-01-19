@@ -1,23 +1,26 @@
 package com.bzzup.fruityrain;
 
+import org.andengine.entity.scene.Scene;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.util.adt.pool.GenericPool;
 
+import com.bzzup.fruityrain.enemy.Enemy;
+
 public class EnemyPool extends GenericPool<Enemy> {
 
 	private ITiledTextureRegion mTextureRegion;
-	private PhysicsWorld world;
-	private Main mainActivity;
+//	private PhysicsWorld world;
+	private Scene mScene;
 
 	@Override
 	protected Enemy onAllocatePoolItem() {
 		return new Enemy(GameLevels.level1.getStartPoint().x, GameLevels.level1.getStartPoint().y, mTextureRegion, 
 				ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(),
-				world);
+				mScene);
 	}
 
-	public EnemyPool(ITiledTextureRegion region, PhysicsWorld pWorld) {
+	public EnemyPool(ITiledTextureRegion region, Scene mScene) {
 		if (region == null) {
 			// Need to be able to create a Sprite so the Pool needs to have a
 			// TextureRegion
@@ -25,7 +28,8 @@ public class EnemyPool extends GenericPool<Enemy> {
 		}
 		// mainActivity = Main.getInstance();
 		this.mTextureRegion = region;
-		this.world = pWorld;
+		this.mScene = mScene;
+//		this.world = pWorld;
 	}
 
 	/**

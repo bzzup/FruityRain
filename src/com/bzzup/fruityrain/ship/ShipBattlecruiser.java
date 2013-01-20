@@ -11,16 +11,12 @@ public class ShipBattlecruiser extends Ship {
 				ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), 
 				mScene);
 		
-		this.setSpeed(1f);
-		this.setFireDistance(300f);
-		this.setFireSpeed(100);
-		this.setDamage(200f);
-		this.setLinearDamping(1f);
+		this.levelUp();
 	}
 	
 	public void levelUp(){
 		if (this.getCurrentLevel() <= this.MAX_LVL) {
-			this.level(ShipDictionary.Fighter.getAttributesForLevel(this.getCurrentLevel()+1));
+			this.level(ShipDictionary.Cruiser.getAttributesForLevel(this.getCurrentLevel()+1));
 		}
 	}
 

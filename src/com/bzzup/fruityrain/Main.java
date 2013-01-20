@@ -35,18 +35,7 @@ public class Main extends SimpleBaseGameActivity {
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		instance = this;
-
-		// final DisplayMetrics displayMetrics = new DisplayMetrics();
-		// this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-		// CAMERA_WIDTH = displayMetrics.widthPixels;
-		// CAMERA_HEIGHT = displayMetrics.heightPixels;
-		// mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-		// RatioResolutionPolicy resolution = new
-		// RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT);
-		// final EngineOptions eOptions = new EngineOptions(true,
-		// ScreenOrientation.LANDSCAPE_FIXED, resolution, mCamera);
-		// return eOptions;
-
+		ResolutionManager.initializeResolutionManager(this);
 		EngineOptionsManager.initializeEngineOptionsManager(getEngine());
 
 		return EngineOptionsManager.getInstance().getEngineOptions();
@@ -60,6 +49,7 @@ public class Main extends SimpleBaseGameActivity {
 	@Override
 	protected void onCreateResources() {
 		ResourceManager.initializeResourceManager(this);
+
 	}
 
 	@Override

@@ -1,7 +1,5 @@
 package com.bzzup.fruityrain;
 
-import java.util.Random;
-
 import org.andengine.entity.modifier.PathModifier.Path;
 
 import com.badlogic.gdx.math.Vector2;

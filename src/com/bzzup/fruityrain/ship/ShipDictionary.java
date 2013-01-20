@@ -4,13 +4,14 @@ package com.bzzup.fruityrain.ship;
 
 public class ShipDictionary {
 	public static class Fighter {
-		public static final long cost = 100;
+		public static final long cost = 500;
 
 		protected static AttributesDictionary getAttributesForLevel(int lvl) {
 			switch (lvl) {
+			// Speed | FireSpeed | Damage | FireDistance | HitsCount | LinearDamping | Exp to lvl
 			case 1:
 			{
-				return new AttributesDictionary(3f, 200, 10f, 200f, 0, 3f, 200);
+				return new AttributesDictionary(3f, 200, 10f, 200f, 0, 30f, 200);
 			}	
 			case 2: {
 				return new AttributesDictionary(2, 2, 2, 2, 2, 2, 200);
@@ -34,7 +35,7 @@ public class ShipDictionary {
 			switch (lvl) {
 			case 1:
 			{
-				return new AttributesDictionary(3f, 200, 10f, 200f, 0, 3f, 200);
+				return new AttributesDictionary(1f, 100, 20f, 300f, 0, 3f, 200);
 			}	
 			case 2: {
 				return new AttributesDictionary(2, 2, 2, 2, 2, 2, 200);

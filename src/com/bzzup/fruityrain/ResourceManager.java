@@ -21,6 +21,7 @@ import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSourc
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.util.debug.Debug;
 
@@ -91,6 +92,8 @@ public class ResourceManager {
 	public TiledTextureRegion mCircleFaceTextureRegion;
 	public TiledTextureRegion baloonPlayer;
 	public TiledTextureRegion baloonEnemy;
+	public TiledTextureRegion bullet_fighter;
+	public TiledTextureRegion enemy_simple;
 	
 	//Physics staff
 	public FixtureDef FIXTURE_DEF_SHIP;
@@ -116,7 +119,7 @@ public class ResourceManager {
 
 	
 	private void loadPhysics() {
-		final short MASK_SHIP = CATEGORY_ENEMY + CATEGORY_WALL; 
+		final short MASK_SHIP = CATEGORY_ENEMY + CATEGORY_WALL + CATEGORY_SHIP; 
 		final short MASK_BULLET =  CATEGORY_ENEMY + CATEGORY_WALL;
 		final short MASK_ENEMY = CATEGORY_BULLET + CATEGORY_SHIP + CATEGORY_WALL; 
 		final short MASK_WALL = -1; 
@@ -129,7 +132,7 @@ public class ResourceManager {
 		FIXTURE_DEF_BULLET.filter.categoryBits = CATEGORY_BULLET;
 		FIXTURE_DEF_BULLET.filter.maskBits = MASK_BULLET;
 		
-		FIXTURE_DEF_ENEMY = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+		FIXTURE_DEF_ENEMY = PhysicsFactory.createFixtureDef(1, 1, 0.5f);
 		FIXTURE_DEF_ENEMY.filter.categoryBits = CATEGORY_ENEMY;
 		FIXTURE_DEF_ENEMY.filter.maskBits = MASK_ENEMY;
 		
@@ -215,10 +218,13 @@ public class ResourceManager {
 //		this.mOnScreenControlTexture.load();
 		
 		// OLD TEXTURES
-		mTextureAtlas = new BitmapTextureAtlas(activityReference.getTextureManager(), 64, 128, TextureOptions.BILINEAR);
+		mTextureAtlas = new BitmapTextureAtlas(activityReference.getTextureManager(), 64, 256, TextureOptions.BILINEAR);
 		mCircleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "face_circle_tiled.png", 0, 32, 2, 1);
 		baloonEnemy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "baloon_enemy.png", 0, 64, 2, 1);
 		baloonPlayer = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "baloon_player.png", 0, 96, 2, 1);
+		bullet_fighter = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "bullet_fighter_white.png", 0, 128, 1, 1);
+		enemy_simple = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "bullet_fighter_white.png", 0, 160, 1, 1);
+		
 		mTextureAtlas.load();
 	}
 

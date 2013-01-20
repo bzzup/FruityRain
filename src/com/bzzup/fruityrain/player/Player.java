@@ -1,16 +1,19 @@
 package com.bzzup.fruityrain.player;
 
+import com.bzzup.fruityrain.GameScene;
+
 public class Player {
 	
 	public static class Money {
-		private long totalMoney;
+		private static long totalMoney;
 
-		public long getTotalMoney() {
+		public static long getTotalMoney() {
 			return totalMoney;
 		}
 
-		public void addMoney(long money) {
-			this.totalMoney += money;
+		public static void addMoney(long money) {
+			totalMoney += money;
+			GameScene.getInstance().getHUD().updateMoney(totalMoney);
 		}
 	}
 	

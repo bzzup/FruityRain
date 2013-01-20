@@ -147,8 +147,9 @@ public abstract class Ship extends AnimatedSprite {
 //		}
 //		mEnemy.hit(damage);
 //		new Bullet(currentCoordinatesX, currentCoordinatesY, getTiledTextureRegion(), getVertexBufferObjectManager(), scene).fire(mEnemy.getMyCoordinates());
-		new FighterBullet(this, mEnemy.getMyCoordinates(), scene);
-
+//		GameScene.getInstance().addBulletToArray(new FighterBullet(this, mEnemy.getMyCoordinates(), scene));
+		GameScene.getInstance().addBulletToArray(new FighterBullet(this, mEnemy, scene));
+		
 		// fireLine = new FireLine(this.getCoordinates().x + 10,
 		// this.getCoordinates().y + 10, mEnemy.getMyCoordinates().x + 15,
 		// mEnemy.getMyCoordinates().y + 15,
@@ -194,6 +195,7 @@ public abstract class Ship extends AnimatedSprite {
 		this.fireDistance = attr.getFireDistance();
 		this.fireSpeed = attr.getFireSpeed();
 		this.linearDamping = attr.getLinerDamping();
+		this.linearDamping = 500;
 		this.expToLevel = attr.getExpToNextLevel();
 		this.currentLevel++;
 		expReset();
@@ -215,6 +217,21 @@ public abstract class Ship extends AnimatedSprite {
 		return currentLevel;
 	}
 
-
-
+//	private void autoSlowBody() {
+//		if ((body.getLinearVelocity().x != 0) || (body.getLinearVelocity().y != 0)) {
+//			if (moveCoolDown.checkValidity()) {
+//				Vector2 slowDirection = new Vector2(-body.getLinearVelocity().x, -body.getLinearVelocity().y);
+//				slowDirection.nor().mul(this.getBreakSpeed());
+//				body.applyLinearImpulse(slowDirection, body.getPosition());
+//			}
+//		}
+//		if (Math.abs(body.getLinearVelocity().x) < 0.1f) {
+//			body.setLinearVelocity(0, body.getLinearVelocity().y);
+//		}
+//		if (Math.abs(body.getLinearVelocity().y) < 0.1f) {
+//			body.setLinearVelocity(body.getLinearVelocity().y, 0);
+//		}
+//
+//	}
+//	
 }

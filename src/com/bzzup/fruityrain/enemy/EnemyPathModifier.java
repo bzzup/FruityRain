@@ -7,7 +7,12 @@ public class EnemyPathModifier extends PathModifier {
 
 	public EnemyPathModifier(float pDuration, Path pPath) {
 		super(pDuration, pPath);
-		// TODO Auto-generated constructor stub
+
 	}
 
+	@Override
+	public float onUpdate(float pSecondsElapsed, IEntity pEntity) {
+		
+		return super.onUpdate(pSecondsElapsed, pEntity);
+	}
 }

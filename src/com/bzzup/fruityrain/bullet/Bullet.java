@@ -1,58 +1,51 @@
 package com.bzzup.fruityrain.bullet;
 
+import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.MoveModifier;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
-import org.andengine.extension.physics.box2d.PhysicsConnector;
-import org.andengine.extension.physics.box2d.PhysicsFactory;
+import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.bzzup.fruityrain.GameScene;
-import com.bzzup.fruityrain.ResourceManager;
+import com.bzzup.fruityrain.enemy.Enemy;
 
-public abstract class Bullet extends AnimatedSprite {
-	private Body body;
-	private Scene scene;
-	private float damage;
-	private boolean active;
+public class Bullet extends AnimatedSprite {
 	
-	private PhysicsConnector physConnector;
+	private Scene scene;
+	private boolean active;
+	private float damage;
 	
 	public Bullet(float pX, float pY, ITiledTextureRegion pTiledTextureRegion, VertexBufferObjectManager pVertexBufferObjectManager, Scene mScene) {
 		super(pX, pY, pTiledTextureRegion, pVertexBufferObjectManager);
-		body = PhysicsFactory.createCircleBody(GameScene.getInstance().getWorld(), this, BodyType.DynamicBody, ResourceManager.getInstance().FIXTURE_DEF_BULLET);
-		body.setUserData(this);
-		physConnector = new PhysicsConnector(this, body, true, true);
-		GameScene.getInstance().getWorld().registerPhysicsConnector(physConnector);
 		this.scene = mScene;
 		this.scene.attachChild(this);
-		body.setBullet(true);
 		this.active = true;
 	}
 	
-	protected void fire(Vector2 enemyPosition) {
-		Vector2 direction = new Vector2((enemyPosition.x - getX()), (enemyPosition.y - getY()));
-		enemyPosition.nor().mul(30f);
-		body.applyLinearImpulse(direction, body.getPosition());
+	@SuppressWarnings("unused")
+	protected void fire(final Enemy mEnemy) {
+		Vector2 enemyPosition = mEnemy.getMyCoordinates();
+		this.registerEntityModifier(new FighterBulletMoveModifier(0.1f, this.getX(), this.getY(), mEnemy) {
+			@Override
+			protected void onModifierFinished(IEntity pItem) {
+				((Bullet) pItem).active = false;
+				mEnemy.hitByDmg(damage);
+				super.onModifierFinished(pItem);
+			}
+		});
 	}
 	
-	protected void setDamage(float dmg) {
-		this.damage = dmg;
+	public boolean isAlive() {
+		return this.active;
 	}
-	
-	public float getDamage() {
-		return this.damage;
+
+	protected float getDamage() {
+		return damage;
 	}
-	
-	public void inactivate() {
-		this.active = false;
-		this.setVisible(false);
-		this.physConnector.setUpdatePosition(false);
-		GameScene.getInstance().getWorld().unregisterPhysicsConnector(physConnector);
-		this.setIgnoreUpdate(true);
+
+	protected void setDamage(float damage) {
+		this.damage = damage;
 	}
-	
 }

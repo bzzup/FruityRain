@@ -43,10 +43,10 @@ public class MenuSelectionScene extends Scene {
 		autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 5);
 		vertexBufferObjectManager = activityReference.getVertexBufferObjectManager();
 
-		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0, EngineOptionsManager.getInstance().CAMERA_HEIGHT
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0, ResolutionManager.getInstance().getCameraHeight()
 				- ResourceManager.getInstance().mParallaxLayerBack.getHeight(), ResourceManager.getInstance().mParallaxLayerBack, vertexBufferObjectManager)));
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(5.0f, new Sprite(0, 80, ResourceManager.getInstance().mParallaxLayerMid, vertexBufferObjectManager)));
-		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-15.0f, new Sprite(0, EngineOptionsManager.getInstance().CAMERA_HEIGHT
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-15.0f, new Sprite(0, ResolutionManager.getInstance().getCameraHeight()
 				- ResourceManager.getInstance().mParallaxLayerFront.getHeight(), ResourceManager.getInstance().mParallaxLayerFront, vertexBufferObjectManager)));
 
 		menuOptionsScene.setBackground(autoParallaxBackground);

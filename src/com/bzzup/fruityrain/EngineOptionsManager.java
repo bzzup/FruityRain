@@ -4,6 +4,7 @@ import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
+import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 
 public class EngineOptionsManager {
@@ -16,8 +17,8 @@ public class EngineOptionsManager {
 	Camera camera;
 
 	// Proper width and height for the game surface/camera
-	public static final int CAMERA_WIDTH = 1280;
-	public static final int CAMERA_HEIGHT = 720;
+	// public static final int CAMERA_WIDTH = 800;
+	// public static final int CAMERA_HEIGHT = 480;
 
 	EngineOptions engineOptions;
 
@@ -34,8 +35,9 @@ public class EngineOptionsManager {
 	private EngineOptionsManager(Engine engineReference) {
 		this.engineReference = engineReference;
 
-		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-		engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
+		camera = new Camera(0, 0, 1280, 720);
+		engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(1280, 720), camera);
+//		engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), camera);
 		engineOptions.getAudioOptions().setNeedsMusic(true);
 	}
 

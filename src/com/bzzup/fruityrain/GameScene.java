@@ -19,6 +19,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.bzzup.fruityrain.bullet.Bullet;
 import com.bzzup.fruityrain.enemy.Enemy;
+import com.bzzup.fruityrain.enemy.EnemyDictionary;
+import com.bzzup.fruityrain.enemy.WaveController;
 import com.bzzup.fruityrain.player.Player;
 import com.bzzup.fruityrain.ship.Ship;
 import com.bzzup.fruityrain.ship.ShipBattlecruiser;
@@ -55,7 +57,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		this.mWorld = new PhysicsWorld(new Vector2(0, 0), false);
 		this.setBackground(new Background(Color.BLACK));
 
-//		mWorld.setContactListener(mContactListener);
+		// mWorld.setContactListener(mContactListener);
 		this.setOnSceneTouchListener(this);
 		setTouchAreaBindingOnActionDownEnabled(true);
 		setTouchAreaBindingOnActionMoveEnabled(true);
@@ -63,7 +65,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		this.registerUpdateHandler(this.mWorld);
 		enemyPool = new EnemyPool(ResourceManager.getInstance().baloonEnemy, this);
 	}
-	
+
 	public GameHUD getHUD() {
 		return this.gameHud;
 	}
@@ -71,14 +73,14 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	private void createWalls() {
 		final VertexBufferObjectManager vertexBufferObjectManager = ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager();
 		final Rectangle ground = new Rectangle(0, ResolutionManager.getInstance().getCameraHeight() - 5, ResolutionManager.getInstance().getCameraWidth(), 5, vertexBufferObjectManager);
-		final Rectangle roof = new Rectangle(0, 0,ResolutionManager.getInstance().getCameraWidth(), 5, vertexBufferObjectManager);
+		final Rectangle roof = new Rectangle(0, 0, ResolutionManager.getInstance().getCameraWidth(), 5, vertexBufferObjectManager);
 		final Rectangle left = new Rectangle(0, 0, 5, ResolutionManager.getInstance().getCameraHeight(), vertexBufferObjectManager);
 		final Rectangle right_top = new Rectangle(ResolutionManager.getInstance().getCameraWidth() - 5, 0, 5, ResolutionManager.getInstance().getCameraHeight(), vertexBufferObjectManager);
 
-		PhysicsFactory.createBoxBody(this.mWorld, ground, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL).setUserData("wall");
-		PhysicsFactory.createBoxBody(this.mWorld, roof, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL).setUserData("wall");
-		PhysicsFactory.createBoxBody(this.mWorld, left, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL).setUserData("wall");
-		PhysicsFactory.createBoxBody(this.mWorld, right_top, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL).setUserData("wall");
+		PhysicsFactory.createBoxBody(this.mWorld, ground, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL);
+		PhysicsFactory.createBoxBody(this.mWorld, roof, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL);
+		PhysicsFactory.createBoxBody(this.mWorld, left, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL);
+		PhysicsFactory.createBoxBody(this.mWorld, right_top, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL);
 
 		this.attachChild(ground);
 		this.attachChild(roof);
@@ -148,8 +150,13 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 				// GameScene.getInstance());
 				// iEnemy.startMoving(GameLevels.level1.getTraectory(),
 				// GameLevels.level1.getTime());
-				enemiesList.add(new Enemy(GameLevels.level1.getStartPoint().x, GameLevels.level1.getStartPoint().y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance()
-						.getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+				// enemiesList.add(new
+				// Enemy(GameLevels.level1.getStartPoint().x,
+				// GameLevels.level1.getStartPoint().y,
+				// ResourceManager.getInstance().baloonEnemy,
+				// ResourceManager.getInstance()
+				// .getActivityReference().getVertexBufferObjectManager(),
+				// GameScene.getInstance()));
 			}
 		});
 		// mainActivity.getEngine().registerUpdateHandler(timeHandler);
@@ -157,7 +164,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	}
 
 	public void addBulletToArray(Bullet bullet) {
-//		bullets.add(bullet);
+		// bullets.add(bullet);
 		spriteBullets.add(bullet);
 	}
 
@@ -188,8 +195,11 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	public void prepareSceneForPlay() {
 		addShip(300, 300, ShipDictionary.ShipTypes.FIGHTER);
 		// addShip(400, 400, ShipDictionary.ShipTypes.CRUISER);
-		createEnemiesWithPeriod();
+		// createEnemiesWithPeriod();
+		WaveController waveControl = new WaveController();
+		addEnemy(0, 0, 1);
 		createWalls();
+		Road road = new Road();
 		// this.attachChild(choppaJoe.getAnimatedSprite());
 		// this.setChildScene(choppaJoeControlla.getAnalogOnScreenControl());
 		EngineOptionsManager.getInstance().getCamera().setHUD(gameHud.getHud());
@@ -207,12 +217,12 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		switch (type) {
 		case ShipDictionary.ShipTypes.FIGHTER: {
 			players.add(new ShipFighter(x, y, this));
-			Player.Money.addMoney(- ShipDictionary.Fighter.cost);
+			Player.Money.addMoney(-ShipDictionary.Fighter.cost);
 		}
 			break;
 		case ShipDictionary.ShipTypes.CRUISER: {
 			players.add(new ShipBattlecruiser(x, y, this));
-			Player.Money.addMoney(- ShipDictionary.Cruiser.cost);
+			Player.Money.addMoney(-ShipDictionary.Cruiser.cost);
 		}
 			break;
 		default:
@@ -220,8 +230,43 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		}
 	}
 
+	public void addEnemy(final float x, final float y, final int type) {
+		TimerHandler enemy_handler = new TimerHandler(2, new ITimerCallback() {
+			
+			@Override
+			public void onTimePassed(TimerHandler pTimerHandler) {
+				switch (type) {
+				case EnemyDictionary.mob1: {
+					enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+				}
+					break;
+				case EnemyDictionary.mob2: {
+					enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+				}
+					break;
+				default:
+					break;
+				}
+				
+			}
+		});
+		ResourceManager.getInstance().getActivityReference().getEngine().registerUpdateHandler(enemy_handler);
+//		switch (type) {
+//		case EnemyDictionary.mob1: {
+//			enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+//		}
+//			break;
+//		case EnemyDictionary.mob2: {
+//			enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+//		}
+//			break;
+//		default:
+//			break;
+//		}
+	}
+
 	private void updateHUD() {
 		gameHud.updateMoney(Player.Money.getTotalMoney());
 	}
-	
+
 }

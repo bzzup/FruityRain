@@ -10,6 +10,7 @@ public class ShipFighter extends Ship {
 				ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), 
 				mScene);
 		this.levelUp();
+		this.setShotSound(ResourceManager.getInstance().fighter_shot);
 	}
 
 	public void levelUp(){

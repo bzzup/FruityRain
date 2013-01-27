@@ -47,6 +47,7 @@ public class ResourceManager {
 
 	// Resources
 	public Music menuMusic;
+	public Music fighter_shot;
 
 	// Fonts
 	public BitmapFont splashBitmapFont;
@@ -94,6 +95,7 @@ public class ResourceManager {
 	public TiledTextureRegion baloonEnemy;
 	public TiledTextureRegion bullet_fighter;
 	public TiledTextureRegion enemy_simple;
+	public TextureRegion ship_fighter;
 	
 	//Physics staff
 	public FixtureDef FIXTURE_DEF_SHIP;
@@ -224,6 +226,7 @@ public class ResourceManager {
 		baloonPlayer = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "baloon_player.png", 0, 96, 2, 1);
 		bullet_fighter = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "bullet_fighter_white.png", 0, 128, 1, 1);
 		enemy_simple = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "bullet_fighter_white.png", 0, 160, 1, 1);
+//		ship_fighter = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mTextureAtlas, activityReference, "fighter_ship", 0, 220);
 		
 		mTextureAtlas.load();
 	}
@@ -239,6 +242,8 @@ public class ResourceManager {
 		MusicFactory.setAssetBasePath("mfx/");
 		try {
 			menuMusic = MusicFactory.createMusicFromAsset(this.activityReference.getEngine().getMusicManager(), activityReference, "wagner_the_ride_of_the_valkyries.ogg");
+			fighter_shot = MusicFactory.createMusicFromAsset(this.activityReference.getEngine().getMusicManager(), activityReference, "fighter_shot_single.ogg");
+			fighter_shot.setLooping(false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -255,6 +260,12 @@ public class ResourceManager {
 	public void stopMenuMusic() {
 		if (menuMusic.isPlaying()) {
 			menuMusic.pause();
+		}
+	}
+	
+	public void playFighterShot() {
+		if (!fighter_shot.isPlaying()) {
+			fighter_shot.play();
 		}
 	}
 }

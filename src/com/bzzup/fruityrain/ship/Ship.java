@@ -1,5 +1,6 @@
 package com.bzzup.fruityrain.ship;
 
+import org.andengine.audio.music.Music;
 import org.andengine.engine.handler.physics.PhysicsHandler;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.scene.Scene;
@@ -13,6 +14,7 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.bzzup.fruityrain.FireLine;
 import com.bzzup.fruityrain.GameScene;
 import com.bzzup.fruityrain.MovementCoolDown;
@@ -46,6 +48,9 @@ public abstract class Ship extends AnimatedSprite {
 
 	private ShootingCoolDown shootingCoolDown;
 	private MovementCoolDown breakCoolDown;
+	private Music shot;
+	
+	private boolean drawDistance = false;
 
 	// /REMOVE
 	FireLine fireLine;
@@ -62,7 +67,7 @@ public abstract class Ship extends AnimatedSprite {
 		this.currentCoordinatesY = pY;
 		this.setTexture(pTiledTextureRegion);
 		this.shootingCoolDown = new ShootingCoolDown(fireSpeed);
-		this.breakCoolDown = new MovementCoolDown(1000);
+		this.breakCoolDown = new MovementCoolDown(200);
 
 		this.scene.registerTouchArea(this);
 		this.scene.attachChild(this);
@@ -149,6 +154,7 @@ public abstract class Ship extends AnimatedSprite {
 //		new Bullet(currentCoordinatesX, currentCoordinatesY, getTiledTextureRegion(), getVertexBufferObjectManager(), scene).fire(mEnemy.getMyCoordinates());
 //		GameScene.getInstance().addBulletToArray(new FighterBullet(this, mEnemy.getMyCoordinates(), scene));
 		GameScene.getInstance().addBulletToArray(new FighterBullet(this, mEnemy, scene));
+		this.playShot();
 		
 		// fireLine = new FireLine(this.getCoordinates().x + 10,
 		// this.getCoordinates().y + 10, mEnemy.getMyCoordinates().x + 15,
@@ -163,6 +169,7 @@ public abstract class Ship extends AnimatedSprite {
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
 		float currentX = pTouchAreaLocalX;
 		float currentY = pTouchAreaLocalY;
+//		drawDistance = true;
 		return super.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
 	}
 
@@ -170,6 +177,16 @@ public abstract class Ship extends AnimatedSprite {
 	protected void onManagedUpdate(float pSecondsElapsed) {
 		super.onManagedUpdate(pSecondsElapsed);
 		recalculateEnemiesDistances();
+		autoSlowBody();
+		if (drawDistance) {
+			drawDistanceRadius();
+		}
+	}
+	
+	private void drawDistanceRadius() {
+		CircleShape circle = new CircleShape();
+		circle.setPosition(this.getCoordinates());
+		circle.setRadius(this.getFireDistance());
 	}
 
 	public void reactOnTouchWave(Vector2 waveVector) {
@@ -217,21 +234,32 @@ public abstract class Ship extends AnimatedSprite {
 		return currentLevel;
 	}
 
-//	private void autoSlowBody() {
-//		if ((body.getLinearVelocity().x != 0) || (body.getLinearVelocity().y != 0)) {
-//			if (moveCoolDown.checkValidity()) {
-//				Vector2 slowDirection = new Vector2(-body.getLinearVelocity().x, -body.getLinearVelocity().y);
-//				slowDirection.nor().mul(this.getBreakSpeed());
-//				body.applyLinearImpulse(slowDirection, body.getPosition());
-//			}
-//		}
-//		if (Math.abs(body.getLinearVelocity().x) < 0.1f) {
-//			body.setLinearVelocity(0, body.getLinearVelocity().y);
-//		}
-//		if (Math.abs(body.getLinearVelocity().y) < 0.1f) {
-//			body.setLinearVelocity(body.getLinearVelocity().y, 0);
-//		}
-//
-//	}
-//	
+	protected void setShotSound(Music shot) {
+		this.shot = shot;
+		shot.setLooping(false);
+	}
+	
+	private void playShot() {
+		if (!shot.isPlaying()) {
+			shot.play();
+		}
+	}
+	
+	private void autoSlowBody() {
+		if ((body.getLinearVelocity().x != 0) || (body.getLinearVelocity().y != 0)) {
+			if (breakCoolDown.checkValidity()) {
+				Vector2 slowDirection = new Vector2(-body.getLinearVelocity().x, -body.getLinearVelocity().y);
+				slowDirection.nor().mul(0.5f);
+				body.applyLinearImpulse(slowDirection, body.getPosition());
+			}
+		}
+		if (Math.abs(body.getLinearVelocity().x) < 0.1f) {
+			body.setLinearVelocity(0, body.getLinearVelocity().y);
+		}
+		if (Math.abs(body.getLinearVelocity().y) < 0.1f) {
+			body.setLinearVelocity(body.getLinearVelocity().y, 0);
+		}
+
+	}
+	
 }

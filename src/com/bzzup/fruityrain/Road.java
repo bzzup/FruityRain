@@ -4,17 +4,11 @@ import java.util.ArrayList;
 
 import org.andengine.entity.modifier.PathModifier.Path;
 import org.andengine.entity.primitive.Line;
-import org.andengine.entity.primitive.Rectangle;
-import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.util.color.Color;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public class Road {
 	
@@ -43,8 +37,8 @@ public class Road {
 			Vector2 bottomB = Vector2Pool.obtain(roadBottom.get(i+1));
 			Line topLine = new Line(topA.x, topA.y, topB.x, topB.y, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager());
 			Line bottomLine = new Line(bottomA.x, bottomA.y, bottomB.x, bottomB.y, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager());
-			Body topBody = PhysicsFactory.createLineBody(GameScene.getInstance().getWorld(), topLine, ResourceManager.getInstance().FIXTURE_DEF_WALL);
-			Body bottomBody = PhysicsFactory.createLineBody(GameScene.getInstance().getWorld(), bottomLine, ResourceManager.getInstance().FIXTURE_DEF_WALL);
+			PhysicsFactory.createLineBody(GameScene.getInstance().getWorld(), topLine, ResourceManager.getInstance().FIXTURE_DEF_WALL);
+			PhysicsFactory.createLineBody(GameScene.getInstance().getWorld(), bottomLine, ResourceManager.getInstance().FIXTURE_DEF_WALL);
 			
 			topLine.setColor(Color.WHITE);
 			bottomLine.setColor(Color.WHITE);

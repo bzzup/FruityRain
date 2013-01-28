@@ -32,7 +32,7 @@ public class GameHUD {
 				.getActivityReference().getVertexBufferObjectManager());
 		hudTimerTextValue = new Text(550, 0, ResourceManager.getInstance().mDroidFont, "0.0", 10, new TextOptions(HorizontalAlign.CENTER), ResourceManager.getInstance().getActivityReference()
 				.getVertexBufferObjectManager());
-		hudMoneyTextValue = new Text(700, 0, ResourceManager.getInstance().mDroidFont, "Money: 0", 10, new TextOptions(HorizontalAlign.RIGHT), ResourceManager.getInstance().getActivityReference()
+		hudMoneyTextValue = new Text(700, 0, ResourceManager.getInstance().mDroidFont, "Money: 0", 20, new TextOptions(HorizontalAlign.RIGHT), ResourceManager.getInstance().getActivityReference()
 				.getVertexBufferObjectManager());
 
 		hud.attachChild(hudTimerTextLabel);

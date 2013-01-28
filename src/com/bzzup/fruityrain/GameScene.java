@@ -103,16 +103,20 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 
 				@Override
 				public void run() {
-					updateHUD();
-					for (Enemy mEnemy : enemiesList) {
-						if (!mEnemy.isAlive()) {
-							mEnemy.detachSelf();
+					try {
+						updateHUD();
+						for (Enemy mEnemy : enemiesList) {
+							if (!mEnemy.isAlive()) {
+								mEnemy.detachSelf();
+							}
 						}
-					}
-					for (Bullet mBullet : spriteBullets) {
-						if (!mBullet.isAlive()) {
-							mBullet.detachSelf();
+						for (Bullet mBullet : spriteBullets) {
+							if (!mBullet.isAlive()) {
+								mBullet.detachSelf();
+							}
 						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
 				}
 			});
@@ -135,36 +139,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		return false;
 	}
 
-	private void createEnemiesWithPeriod() {
-		TimerHandler timeHandler;
-
-		timeHandler = new TimerHandler(dropSpeed, true, new ITimerCallback() {
-
-			@Override
-			public void onTimePassed(TimerHandler pTimerHandler) {
-				// Enemy iEnemy = enemyPool.obtainPoolItem();
-				// Enemy iEnemy = new Enemy(GameLevels.level1.getStartPoint().x,
-				// GameLevels.level1.getStartPoint().y,
-				// ResourceManager.getInstance().baloonPlayer,
-				// ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(),
-				// GameScene.getInstance());
-				// iEnemy.startMoving(GameLevels.level1.getTraectory(),
-				// GameLevels.level1.getTime());
-				// enemiesList.add(new
-				// Enemy(GameLevels.level1.getStartPoint().x,
-				// GameLevels.level1.getStartPoint().y,
-				// ResourceManager.getInstance().baloonEnemy,
-				// ResourceManager.getInstance()
-				// .getActivityReference().getVertexBufferObjectManager(),
-				// GameScene.getInstance()));
-			}
-		});
-		// mainActivity.getEngine().registerUpdateHandler(timeHandler);
-		ResourceManager.getInstance().getActivityReference().getEngine().registerUpdateHandler(timeHandler);
-	}
-
 	public void addBulletToArray(Bullet bullet) {
-		// bullets.add(bullet);
 		spriteBullets.add(bullet);
 	}
 
@@ -182,7 +157,6 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 
 	public void prepareSceneForIntro() {
 		// add countdown text
-		createWalls();
 		this.attachChild(gameHud.getIntroText());
 		gameHud.getIntroTextModifier().reset();
 	}
@@ -197,7 +171,6 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		// addShip(400, 400, ShipDictionary.ShipTypes.CRUISER);
 		// createEnemiesWithPeriod();
 		WaveController waveControl = new WaveController();
-		addEnemy(0, 0, 1);
 		createWalls();
 		Road road = new Road();
 		// this.attachChild(choppaJoe.getAnimatedSprite());
@@ -232,37 +205,45 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 
 	public void addEnemy(final float x, final float y, final int type) {
 		TimerHandler enemy_handler = new TimerHandler(2, new ITimerCallback() {
-			
+
 			@Override
 			public void onTimePassed(TimerHandler pTimerHandler) {
 				switch (type) {
 				case EnemyDictionary.mob1: {
-					enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+					enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene
+							.getInstance()));
 				}
 					break;
 				case EnemyDictionary.mob2: {
-					enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+					enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene
+							.getInstance()));
 				}
 					break;
 				default:
 					break;
 				}
-				
+
 			}
 		});
 		ResourceManager.getInstance().getActivityReference().getEngine().registerUpdateHandler(enemy_handler);
-//		switch (type) {
-//		case EnemyDictionary.mob1: {
-//			enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
-//		}
-//			break;
-//		case EnemyDictionary.mob2: {
-//			enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
-//		}
-//			break;
-//		default:
-//			break;
-//		}
+		// switch (type) {
+		// case EnemyDictionary.mob1: {
+		// enemiesList.add(new Enemy(x, y,
+		// ResourceManager.getInstance().baloonEnemy,
+		// ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(),
+		// GameScene.getInstance()));
+		// }
+		// break;
+		// case EnemyDictionary.mob2: {
+		// enemiesList.add(new Enemy(x, y,
+		// ResourceManager.getInstance().baloonEnemy,
+		// ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(),
+		// GameScene.getInstance()));
+		// }
+		// break;
+		// default:
+		// break;
+		// }
 	}
 
 	private void updateHUD() {

@@ -204,46 +204,18 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	}
 
 	public void addEnemy(final float x, final float y, final int type) {
-		TimerHandler enemy_handler = new TimerHandler(2, new ITimerCallback() {
-
-			@Override
-			public void onTimePassed(TimerHandler pTimerHandler) {
-				switch (type) {
-				case EnemyDictionary.mob1: {
-					enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene
-							.getInstance()));
-				}
-					break;
-				case EnemyDictionary.mob2: {
-					enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene
-							.getInstance()));
-				}
-					break;
-				default:
-					break;
-				}
-
-			}
-		});
-		ResourceManager.getInstance().getActivityReference().getEngine().registerUpdateHandler(enemy_handler);
-		// switch (type) {
-		// case EnemyDictionary.mob1: {
-		// enemiesList.add(new Enemy(x, y,
-		// ResourceManager.getInstance().baloonEnemy,
-		// ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(),
-		// GameScene.getInstance()));
-		// }
-		// break;
-		// case EnemyDictionary.mob2: {
-		// enemiesList.add(new Enemy(x, y,
-		// ResourceManager.getInstance().baloonEnemy,
-		// ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(),
-		// GameScene.getInstance()));
-		// }
-		// break;
-		// default:
-		// break;
-		// }
+		switch (type) {
+		case EnemyDictionary.mob1: {
+			enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+		}
+			break;
+		case EnemyDictionary.mob2: {
+			enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+		}
+			break;
+		default:
+			break;
+		}
 	}
 
 	private void updateHUD() {

@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 public class Wave {
 	
-	private int cooldown;
+	private float cooldown;
 	private ArrayList<Integer> mobs;
 	private int wavelevel;
+	private float waveTimeout;
 	
 	
 	public Wave() {
@@ -24,7 +25,7 @@ public class Wave {
 	}
 
 
-	public int getCooldown() {
+	public float getCooldown() {
 		return cooldown;
 	}
 
@@ -39,5 +40,15 @@ public class Wave {
 	
 	public ArrayList<Integer> getMobsPerWave() {
 		return mobs;
+	}
+
+
+	public float getWaveTimeout() {
+		return waveTimeout;
+	}
+
+
+	public void setWaveTimeout(float waveTimeout) {
+		this.waveTimeout = waveTimeout;
 	}
 }

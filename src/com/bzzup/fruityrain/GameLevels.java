@@ -23,6 +23,7 @@ public class GameLevels {
 			wave = new Wave();
 			wave.setWavelevel(1);
 			wave.setCooldown(1);
+			wave.setWaveTimeout(1);
 			
 			wave.addMob(EnemyDictionary.mob1);
 			wave.addMob(EnemyDictionary.mob1);
@@ -36,12 +37,34 @@ public class GameLevels {
 			
 			wave = new Wave();
 			wave.setWavelevel(2);
-			wave.setCooldown(1);
+			wave.setCooldown(2);
+			wave.setWaveTimeout(15);
 			
 			wave.addMob(EnemyDictionary.mob1);
 			wave.addMob(EnemyDictionary.mob1);
 			wave.addMob(EnemyDictionary.mob1);
 			wave.addMob(EnemyDictionary.mob1);
+			wave.addMob(EnemyDictionary.mob1);
+			wave.addMob(EnemyDictionary.mob1);
+						
+			waves.add(wave);
+			
+			wave = new Wave();
+			wave.setWavelevel(3);
+			wave.setCooldown(5);
+			wave.setWaveTimeout(15);
+			
+			wave.addMob(EnemyDictionary.mob1);
+			wave.addMob(EnemyDictionary.mob1);
+			wave.addMob(EnemyDictionary.mob1);
+			
+			waves.add(wave);
+			
+			wave = new Wave();
+			wave.setWavelevel(4);
+			wave.setCooldown(5);
+			wave.setWaveTimeout(15);
+			
 			wave.addMob(EnemyDictionary.mob1);
 			wave.addMob(EnemyDictionary.mob1);
 			wave.addMob(EnemyDictionary.mob1);

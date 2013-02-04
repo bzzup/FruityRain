@@ -28,15 +28,15 @@ public class GameHUD {
 
 		hud = new HUD();
 
-		hudTimerTextLabel = new Text(0, 0, ResourceManager.getInstance().splashBitmapFont, "TIME ROCKIN' THE CHOPPA:", new TextOptions(HorizontalAlign.CENTER), ResourceManager.getInstance()
-				.getActivityReference().getVertexBufferObjectManager());
-		hudTimerTextValue = new Text(550, 0, ResourceManager.getInstance().mDroidFont, "0.0", 10, new TextOptions(HorizontalAlign.CENTER), ResourceManager.getInstance().getActivityReference()
-				.getVertexBufferObjectManager());
+//		hudTimerTextLabel = new Text(0, 0, ResourceManager.getInstance().splashBitmapFont, "TIME ROCKIN' THE CHOPPA:", new TextOptions(HorizontalAlign.CENTER), ResourceManager.getInstance()
+//				.getActivityReference().getVertexBufferObjectManager());
+//		hudTimerTextValue = new Text(550, 0, ResourceManager.getInstance().mDroidFont, "0.0", 10, new TextOptions(HorizontalAlign.CENTER), ResourceManager.getInstance().getActivityReference()
+//				.getVertexBufferObjectManager());
 		hudMoneyTextValue = new Text(700, 0, ResourceManager.getInstance().mDroidFont, "Money: 0", 20, new TextOptions(HorizontalAlign.RIGHT), ResourceManager.getInstance().getActivityReference()
 				.getVertexBufferObjectManager());
 
-		hud.attachChild(hudTimerTextLabel);
-		hud.attachChild(hudTimerTextValue);
+//		hud.attachChild(hudTimerTextLabel);
+//		hud.attachChild(hudTimerTextValue);
 		hud.attachChild(hudMoneyTextValue);
 
 		// intro text & modifier
@@ -45,6 +45,26 @@ public class GameHUD {
 		introTextModifier = new ParallelEntityModifier(new AlphaModifier(2, 1, 0), new ScaleModifier(2, 2, 0.5f));
 		introTextValue.registerEntityModifier(introTextModifier);
 		attachSprites();
+		attachButtons();
+	}
+	
+	private void attachButtons() {
+		AnimatedSprite hud_button_pause = new AnimatedSprite(30, 10, ResourceManager.getInstance().hud_pause_button, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager()) {
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+				if (pSceneTouchEvent.isActionDown()) {
+					if (this.getCurrentTileIndex() == 0) {
+						this.setCurrentTileIndex(1);
+					} else {
+						this.setCurrentTileIndex(0);
+					}
+				}
+				return super.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
+			}
+		};
+		hud_button_pause.setScale(1.5f);
+		hud.attachChild(hud_button_pause);
+		GameScene.getInstance().registerTouchArea(hud_button_pause);
 	}
 
 	private void attachSprites() {

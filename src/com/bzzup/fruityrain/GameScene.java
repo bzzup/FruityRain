@@ -21,6 +21,7 @@ import com.bzzup.fruityrain.bullet.Bullet;
 import com.bzzup.fruityrain.enemy.Enemy;
 import com.bzzup.fruityrain.enemy.EnemyDictionary;
 import com.bzzup.fruityrain.enemy.WaveController;
+import com.bzzup.fruityrain.game.TouchWave;
 import com.bzzup.fruityrain.player.Player;
 import com.bzzup.fruityrain.ship.Ship;
 import com.bzzup.fruityrain.ship.ShipBattlecruiser;
@@ -30,6 +31,7 @@ import com.bzzup.fruityrain.ship.ShipFighter;
 public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHandler {
 
 	public GameHUD gameHud;
+	private boolean isReadyForClearScene = false;
 
 	private float dropSpeed = 2f; // sec
 	private final float touchArea = 150;
@@ -99,33 +101,51 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 
 		@Override
 		public void onUpdate(float pSecondsElapsed) {
-			ResourceManager.getInstance().getActivityReference().runOnUpdateThread(new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						updateHUD();
-						for (Enemy mEnemy : enemiesList) {
-							if (!mEnemy.isAlive()) {
-								mEnemy.detachSelf();
-							}
-						}
-						for (Bullet mBullet : spriteBullets) {
-							if (!mBullet.isAlive()) {
-								mBullet.detachSelf();
-							}
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
+			updateHUD();
+			for (Enemy mEnemy : enemiesList) {
+				if (!mEnemy.isAlive()) {
+					mEnemy.detachSelf();
 				}
-			});
-
+			}
+			for (Bullet mBullet : spriteBullets) {
+				if (!mBullet.isAlive()) {
+					mBullet.detachSelf();
+				}
+			}
+			if (isReadyForClearScene) {
+				GameScene.getInstance().detachChildren();
+				GameScene.getInstance().clearChildScene();
+			}
+//			ResourceManager.getInstance().getActivityReference().runOnUpdateThread(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					try {
+//						updateHUD();
+//						for (Enemy mEnemy : enemiesList) {
+//							if (!mEnemy.isAlive()) {
+//								mEnemy.detachSelf();
+//							}
+//						}
+//						for (Bullet mBullet : spriteBullets) {
+//							if (!mBullet.isAlive()) {
+//								mBullet.detachSelf();
+//							}
+//						}
+//					} catch (Exception ex) {
+//						ex.printStackTrace();
+//					}
+//				}
+//			});
 		}
 	};
+	
 
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
+		if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
+			new TouchWave(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+		}
 		if (this.mWorld != null) {
 			if (pSceneTouchEvent.isActionDown()) {
 				for (Ship player : this.players) {
@@ -180,10 +200,13 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	}
 
 	public void cleanupAfterPlay() {
-		this.detachChildren();
-		this.clearChildScene();
-		// choppaJoe.getScaleModifier().reset();
+		WaveController.getInstance().unregisterWaveController();
 		EngineOptionsManager.getInstance().getCamera().setHUD(null);
+//		this.detachChildren();
+//		this.clearChildScene();
+		isReadyForClearScene = true;
+		// choppaJoe.getScaleModifier().reset();
+		
 	}
 
 	public void addShip(float x, float y, int type) {
@@ -206,11 +229,11 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	public void addEnemy(final float x, final float y, final int type) {
 		switch (type) {
 		case EnemyDictionary.mob1: {
-			enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+			enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().enemy_simple, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
 		}
 			break;
 		case EnemyDictionary.mob2: {
-			enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
+			enemiesList.add(new Enemy(x, y, ResourceManager.getInstance().enemy_simple, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), GameScene.getInstance()));
 		}
 			break;
 		default:

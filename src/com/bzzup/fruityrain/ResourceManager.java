@@ -96,6 +96,12 @@ public class ResourceManager {
 	public TiledTextureRegion bullet_fighter;
 	public TiledTextureRegion enemy_simple;
 	public TextureRegion ship_fighter;
+	public TextureRegion road_point;
+	public TiledTextureRegion hud_pause_button;
+	
+	/// GAME GLOBAL
+	public BitmapTextureAtlas mGameTextureAtlas;
+	public TextureRegion touch_circle;
 	
 	//Physics staff
 	public FixtureDef FIXTURE_DEF_SHIP;
@@ -220,15 +226,21 @@ public class ResourceManager {
 //		this.mOnScreenControlTexture.load();
 		
 		// OLD TEXTURES
-		mTextureAtlas = new BitmapTextureAtlas(activityReference.getTextureManager(), 64, 256, TextureOptions.BILINEAR);
+		mTextureAtlas = new BitmapTextureAtlas(activityReference.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
 		mCircleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "face_circle_tiled.png", 0, 32, 2, 1);
 		baloonEnemy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "baloon_enemy.png", 0, 64, 2, 1);
 		baloonPlayer = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "baloon_player.png", 0, 96, 2, 1);
 		bullet_fighter = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "bullet_fighter_white.png", 0, 128, 1, 1);
-		enemy_simple = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "bullet_fighter_white.png", 0, 160, 1, 1);
+		enemy_simple = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "animated_enemy_a.png", 0, 160, 4, 1);
+		hud_pause_button = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "hud_pause_animated.png", 0, 210, 2, 1);
+		road_point = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mTextureAtlas, activityReference, "road_point.png", 65, 0);
 //		ship_fighter = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mTextureAtlas, activityReference, "fighter_ship", 0, 220);
 		
 		mTextureAtlas.load();
+		
+		mGameTextureAtlas = new BitmapTextureAtlas(activityReference.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
+		touch_circle = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mGameTextureAtlas, activityReference, "touch_circle.png", 0, 0);
+		mGameTextureAtlas.load();
 	}
 
 	// access the application

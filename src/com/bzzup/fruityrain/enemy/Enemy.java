@@ -4,14 +4,18 @@ import org.andengine.engine.handler.physics.PhysicsHandler;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.PathModifier.Path;
 import org.andengine.entity.modifier.ScaleModifier;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.color.Color;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.bzzup.fruityrain.GameLevels;
+import com.bzzup.fruityrain.GameScene;
+import com.bzzup.fruityrain.ResourceManager;
 import com.bzzup.fruityrain.player.Player;
 import com.bzzup.fruityrain.ship.Ship;
 
@@ -27,7 +31,10 @@ public class Enemy extends AnimatedSprite {
 	private float currentCoordinatesY;
 
 	private boolean isAlive = true;
-	private long health;
+	private long currentHealth;
+	private long maxHealth;
+	
+	private Rectangle healthBar;
 
 	public Enemy(float pX, float pY, ITiledTextureRegion pTiledTextureRegion, VertexBufferObjectManager vertexBufferObjectManager, Scene mScene) {
 		super(pX, pY, pTiledTextureRegion, vertexBufferObjectManager);
@@ -48,6 +55,10 @@ public class Enemy extends AnimatedSprite {
 		startMoving(GameLevels.level1.getTraectory(), GameLevels.level1.getTime());
 		setHealth(50);
 		setRegard(100);
+		
+		healthBar = new Rectangle(getMyCoordinates().x-10, getMyCoordinates().y+10, 30, 5, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager());
+		healthBar.setColor(Color.GREEN);
+		this.scene.attachChild(healthBar);
 	}
 
 	protected void setTexture(ITiledTextureRegion texture) {
@@ -63,15 +74,16 @@ public class Enemy extends AnimatedSprite {
 	}
 
 	protected long getHealth() {
-		return health;
+		return currentHealth;
 	}
 
 	protected void setHealth(long health) {
-		this.health = health;
+		this.currentHealth = health;
+		this.maxHealth = health;
 	}
 
 	public void hitByDmg(float dmg) {
-		this.health -= dmg;
+		this.currentHealth -= dmg;
 	}
 	
 	public Vector2 getMyCoordinates() {
@@ -94,10 +106,12 @@ public class Enemy extends AnimatedSprite {
 
 	@Override
 	protected void onManagedUpdate(float pSecondsElapsed) {
-		if (this.health < 0) {
+		if (this.currentHealth < 0) {
 			this.isAlive = false;
 			Player.Money.addMoney(this.regard);
 		}
+		healthBar.setPosition(getMyCoordinates().x-10, getMyCoordinates().y+10);
+		healthBar.setWidth(currentHealth/maxHealth * 20);
 		super.onManagedUpdate(pSecondsElapsed);
 	}
 
@@ -109,4 +123,6 @@ public class Enemy extends AnimatedSprite {
 		this.regard = regard;
 	}
 
+	
+	
 }

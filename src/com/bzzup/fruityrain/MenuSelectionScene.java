@@ -76,11 +76,13 @@ public class MenuSelectionScene extends Scene {
 		final IMenuItem playMenuItem = new ColorMenuItemDecorator(new TextMenuItem(MENU_PLAY, ResourceManager.getInstance().mDroidFont, "PLAY", activityReference.getVertexBufferObjectManager()),
 				new Color(1, 0, 0), new Color(1, 1, 1));
 		playMenuItem.setBlendFunction(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+		playMenuItem.setScale(1.5f);
 		menuOptionsScene.addMenuItem(playMenuItem);
 
 		final IMenuItem quitMenuItem = new ColorMenuItemDecorator(new TextMenuItem(MENU_QUIT, ResourceManager.getInstance().mDroidFont, "QUIT", activityReference.getVertexBufferObjectManager()),
 				new Color(1, 0, 0), new Color(1, 1, 1));
 		quitMenuItem.setBlendFunction(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+		quitMenuItem.setScale(1.5f);
 		menuOptionsScene.addMenuItem(quitMenuItem);
 
 		menuOptionsScene.buildAnimations();

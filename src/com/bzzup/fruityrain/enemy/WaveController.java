@@ -15,6 +15,7 @@ public class WaveController {
 	TimerHandler waveTimer;
 	TimerHandler timeoutTimer;
 	float timerCooldown;
+	private static WaveController instance;
 	
 	private ArrayList<Wave> waves;
 	private ArrayList<Integer> mobsInWave;
@@ -26,6 +27,7 @@ public class WaveController {
 	private float nextWaveTimeout = 1;
 
 	public WaveController() {
+		instance = this;
 		GameLevels.level1.initialize();
 		waves = GameLevels.level1.getWaves();
 		this.wavesCount = waves.size();
@@ -89,8 +91,17 @@ public class WaveController {
 		Log.d("MY", "Current wave = "+currentWave+"; Current Mob = "+currentMobInWave);
 		return curMob;
 	}
+	
+	public static WaveController getInstance() {
+		return instance;
+	}
 
-
+	public void unregisterWaveController() {
+		waveTimer.reset();
+		timeoutTimer.reset();
+		GameScene.getInstance().unregisterUpdateHandler(waveTimer);
+		GameScene.getInstance().registerUpdateHandler(timeoutTimer);
+	}
 
 
 

@@ -146,22 +146,11 @@ public abstract class Ship extends AnimatedSprite {
 	}
 
 	private void fireBullet(Enemy mEnemy) {
-//		if (fireLine != null) {
-//			fireLine.detachSelf();
-//			fireLine = null;
-//		}
 //		mEnemy.hit(damage);
 //		new Bullet(currentCoordinatesX, currentCoordinatesY, getTiledTextureRegion(), getVertexBufferObjectManager(), scene).fire(mEnemy.getMyCoordinates());
 //		GameScene.getInstance().addBulletToArray(new FighterBullet(this, mEnemy.getMyCoordinates(), scene));
 		GameScene.getInstance().addBulletToArray(new FighterBullet(this, mEnemy, scene));
 		this.playShot();
-		
-		// fireLine = new FireLine(this.getCoordinates().x + 10,
-		// this.getCoordinates().y + 10, mEnemy.getMyCoordinates().x + 15,
-		// mEnemy.getMyCoordinates().y + 15,
-		// ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager());
-		// fireLine.setColor(Color.WHITE);
-		// this.scene.attachChild(fireLine);
 	}
 
 	@SuppressWarnings("unused")

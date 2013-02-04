@@ -2,8 +2,13 @@ package com.bzzup.fruityrain;
 
 import java.util.ArrayList;
 
+import org.andengine.entity.modifier.AlphaModifier;
+import org.andengine.entity.modifier.LoopEntityModifier;
 import org.andengine.entity.modifier.PathModifier.Path;
+import org.andengine.entity.modifier.ScaleModifier;
+import org.andengine.entity.modifier.SequenceEntityModifier;
 import org.andengine.entity.primitive.Line;
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.util.color.Color;
@@ -40,11 +45,22 @@ public class Road {
 			PhysicsFactory.createLineBody(GameScene.getInstance().getWorld(), topLine, ResourceManager.getInstance().FIXTURE_DEF_WALL);
 			PhysicsFactory.createLineBody(GameScene.getInstance().getWorld(), bottomLine, ResourceManager.getInstance().FIXTURE_DEF_WALL);
 			
-			topLine.setColor(Color.WHITE);
-			bottomLine.setColor(Color.WHITE);
+//			topLine.setColor(Color.WHITE);
+//			bottomLine.setColor(Color.WHITE);
+			Sprite pointTop = new Sprite(topB.x, topB.y, ResourceManager.getInstance().road_point, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager());
+			pointTop.setScale(0.5f);
+			Sprite pointBottom = new Sprite(bottomB.x, bottomB.y, ResourceManager.getInstance().road_point, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager());
+			pointBottom.setScale(0.5f);
 			
-			GameScene.getInstance().attachChild(topLine);
-			GameScene.getInstance().attachChild(bottomLine);
+			GameScene.getInstance().attachChild(pointTop);
+			GameScene.getInstance().attachChild(pointBottom);
+			
+			AlphaModifier fading = new AlphaModifier(3f, 1, 0.1f);
+			AlphaModifier clearer = new AlphaModifier(3f, 0.1f, 1);
+			SequenceEntityModifier seq = new SequenceEntityModifier(fading, clearer);
+			LoopEntityModifier loop = new LoopEntityModifier(seq);
+			pointTop.registerEntityModifier(loop);
+			pointBottom.registerEntityModifier(loop);
 			
 			Vector2Pool.recycle(topA);
 			Vector2Pool.recycle(topB);

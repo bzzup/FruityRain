@@ -144,7 +144,8 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
 		if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
-			new TouchWave(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+//			new TouchWave(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+			TouchWave.getInstance().showTouchArea(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
 		}
 		if (this.mWorld != null) {
 			if (pSceneTouchEvent.isActionDown()) {

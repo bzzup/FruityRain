@@ -102,6 +102,7 @@ public class ResourceManager {
 	/// GAME GLOBAL
 	public BitmapTextureAtlas mGameTextureAtlas;
 	public TextureRegion touch_circle;
+	public TextureRegion radar_circle;
 	
 	//Physics staff
 	public FixtureDef FIXTURE_DEF_SHIP;
@@ -240,6 +241,7 @@ public class ResourceManager {
 		
 		mGameTextureAtlas = new BitmapTextureAtlas(activityReference.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
 		touch_circle = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mGameTextureAtlas, activityReference, "touch_circle.png", 0, 0);
+		radar_circle =  BitmapTextureAtlasTextureRegionFactory.createFromAsset(mGameTextureAtlas, activityReference, "radar_150.png", 0, 100);
 		mGameTextureAtlas.load();
 	}
 

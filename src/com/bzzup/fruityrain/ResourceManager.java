@@ -12,6 +12,7 @@ import org.andengine.opengl.font.BitmapFont;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.ITexture;
+import org.andengine.opengl.texture.Texture;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -103,6 +104,9 @@ public class ResourceManager {
 	public BitmapTextureAtlas mGameTextureAtlas;
 	public TextureRegion touch_circle;
 	public TextureRegion radar_circle;
+	
+	//GAME ENEMIES
+	public TextureRegion enemy_radiation;
 	
 	//Physics staff
 	public FixtureDef FIXTURE_DEF_SHIP;
@@ -235,6 +239,7 @@ public class ResourceManager {
 		enemy_simple = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "animated_enemy_a.png", 0, 160, 4, 1);
 		hud_pause_button = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mTextureAtlas, activityReference, "hud_pause_animated.png", 0, 210, 2, 1);
 		road_point = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mTextureAtlas, activityReference, "road_point.png", 65, 0);
+		enemy_radiation = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mTextureAtlas, activityReference, "enemy_radiation.png", 65, 20);
 //		ship_fighter = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mTextureAtlas, activityReference, "fighter_ship", 0, 220);
 		
 		mTextureAtlas.load();

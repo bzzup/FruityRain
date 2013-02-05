@@ -71,27 +71,37 @@ public class GameHUD {
 		AnimatedSprite sampleShip = new AnimatedSprite(1200, 50, ResourceManager.getInstance().baloonPlayer, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				if (Player.Money.getTotalMoney() >= 500) {
-					GameScene.getInstance().addShip(200, 200, ShipDictionary.ShipTypes.FIGHTER);
+				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
+					if (Player.Money.getTotalMoney() >= ShipDictionary.Fighter.cost) {
+						GameScene.getInstance().addShip(200, 200, ShipDictionary.ShipTypes.FIGHTER);
+					}
 				}
 				return super.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
 			}
 		};
-
-		Text sampleShipCost = new Text(1180, 80, ResourceManager.getInstance().splashBitmapFont, "500", 10, new TextOptions(HorizontalAlign.CENTER), ResourceManager.getInstance()
+		sampleShip.animate(200);
+		sampleShip.setScale(1.5f);
+		
+		Text sampleShipCost = new Text(sampleShip.getX(), sampleShip.getY() + sampleShip.getHeightScaled() + 5, 
+				ResourceManager.getInstance().splashBitmapFont, 
+				String.valueOf(ShipDictionary.Fighter.cost), 10, new TextOptions(HorizontalAlign.CENTER), ResourceManager.getInstance()
 				.getActivityReference().getVertexBufferObjectManager());
 		
 		AnimatedSprite sampleShip2 = new AnimatedSprite(1200, 150, ResourceManager.getInstance().baloonEnemy, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				if (Player.Money.getTotalMoney() >= 1000) {
+				if (Player.Money.getTotalMoney() >= ShipDictionary.Cruiser.cost) {
 					GameScene.getInstance().addShip(200, 200, ShipDictionary.ShipTypes.CRUISER);
 				}
 				return super.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
 			}
 		};
+		sampleShip2.animate(200);
+		sampleShip2.setScale(1.5f);
 		
-		Text sampleShipCost2 = new Text(1180, 180, ResourceManager.getInstance().splashBitmapFont, "1000", 10, new TextOptions(HorizontalAlign.CENTER), ResourceManager.getInstance()
+		Text sampleShipCost2 = new Text(sampleShip2.getX(), sampleShip2.getY() + sampleShip2.getHeightScaled() + 5, 
+				ResourceManager.getInstance().splashBitmapFont, 
+				String.valueOf(ShipDictionary.Cruiser.cost), 10, new TextOptions(HorizontalAlign.CENTER), ResourceManager.getInstance()
 				.getActivityReference().getVertexBufferObjectManager());
 		
 		hud.attachChild(sampleShip);

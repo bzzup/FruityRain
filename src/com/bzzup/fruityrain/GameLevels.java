@@ -116,5 +116,9 @@ public class GameLevels {
 		public static ArrayList<Wave> getWaves() {
 			return waves;
 		}
+		
+		public static int getStartMoney() {
+			return 700;
+		}
 	}
 }

@@ -31,13 +31,15 @@ public class Enemy extends AnimatedSprite {
 	private float currentCoordinatesY;
 
 	private boolean isAlive = true;
-	private long currentHealth;
-	private long maxHealth;
+	private float currentHealth;
+	private float maxHealth;
 	
 	private Rectangle healthBar;
+	private Enemy instance;
 
 	public Enemy(float pX, float pY, ITiledTextureRegion pTiledTextureRegion, VertexBufferObjectManager vertexBufferObjectManager, Scene mScene) {
 		super(pX, pY, pTiledTextureRegion, vertexBufferObjectManager);
+		this.instance = this;
 //		body = PhysicsFactory.createCircleBody(GameScene.getInstance().getWorld(), this, BodyType.DynamicBody, ResourceManager.getInstance().FIXTURE_DEF_ENEMY);
 //		body.setUserData(this);
 //		GameScene.getInstance().getWorld().registerPhysicsConnector(new PhysicsConnector(this, body, true, true));
@@ -56,7 +58,7 @@ public class Enemy extends AnimatedSprite {
 		setHealth(50);
 		setRegard(100);
 		
-		healthBar = new Rectangle(getMyCoordinates().x-10, getMyCoordinates().y+10, 30, 5, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager());
+		healthBar = new Rectangle(getMyCoordinates().x, getMyCoordinates().y + this.getHeight(), this.getWidth(), 5, ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager());
 		healthBar.setColor(Color.GREEN);
 		this.scene.attachChild(healthBar);
 	}
@@ -73,7 +75,7 @@ public class Enemy extends AnimatedSprite {
 		this.isAlive = false;
 	}
 
-	protected long getHealth() {
+	protected float getHealth() {
 		return currentHealth;
 	}
 
@@ -106,12 +108,27 @@ public class Enemy extends AnimatedSprite {
 
 	@Override
 	protected void onManagedUpdate(float pSecondsElapsed) {
-		if (this.currentHealth < 0) {
+		if (this.currentHealth <= 0) {
 			this.isAlive = false;
 			Player.Money.addMoney(this.regard);
+			ResourceManager.getInstance().getActivityReference().runOnUpdateThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					healthBar.setWidth(0);
+					GameScene.getInstance().detachChild(healthBar);
+					healthBar = null;
+					
+					instance.setVisible(false);
+					instance.setIgnoreUpdate(true);
+					instance.clearUpdateHandlers();
+					GameScene.getInstance().detachChild(instance);
+					
+				}
+			});
 		}
-		healthBar.setPosition(getMyCoordinates().x-10, getMyCoordinates().y+10);
-		healthBar.setWidth(currentHealth/maxHealth * 20);
+		healthBar.setPosition(getMyCoordinates().x, getMyCoordinates().y + this.getHeight());
+		healthBar.setWidth(currentHealth/maxHealth * this.getWidth());
 		super.onManagedUpdate(pSecondsElapsed);
 	}
 

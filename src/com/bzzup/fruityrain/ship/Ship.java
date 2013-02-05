@@ -2,30 +2,33 @@ package com.bzzup.fruityrain.ship;
 
 import org.andengine.audio.music.Music;
 import org.andengine.engine.handler.physics.PhysicsHandler;
+import org.andengine.entity.modifier.LoopEntityModifier;
+import org.andengine.entity.modifier.ParallelEntityModifier;
+import org.andengine.entity.modifier.RotationModifier;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
+import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.bzzup.fruityrain.FireLine;
 import com.bzzup.fruityrain.GameScene;
 import com.bzzup.fruityrain.MovementCoolDown;
 import com.bzzup.fruityrain.ResourceManager;
 import com.bzzup.fruityrain.bullet.FighterBullet;
 import com.bzzup.fruityrain.enemy.Enemy;
 
-public abstract class Ship extends AnimatedSprite {
+public abstract class Ship extends Sprite {
 
 	protected final int MAX_LVL = 5;
-	
+
 	protected ScaleModifier scaleModifier;
 	protected PhysicsHandler physicsHandler;
 	private ITiledTextureRegion texture;
@@ -42,32 +45,36 @@ public abstract class Ship extends AnimatedSprite {
 	private long hitsCount = 0;
 	private float linearDamping;
 	private long expToLevel;
-	
+
 	private long exp;
 	private int currentLevel = 0;
 
 	private ShootingCoolDown shootingCoolDown;
 	private MovementCoolDown breakCoolDown;
 	private Music shot;
-	
+
 	private boolean drawDistance = false;
+	private LoopEntityModifier loop;
 
-	// /REMOVE
-	FireLine fireLine;
+	// Radar
+	private LoopEntityModifier radar;
+	private boolean isRadarDisplaying = false;
+	Sprite radar_sprite;
 
-	public Ship(float pX, float pY, ITiledTextureRegion pTiledTextureRegion, VertexBufferObjectManager vertexBufferObjectManager, Scene mScene) {
-		super(pX, pY, pTiledTextureRegion, vertexBufferObjectManager);
+	public Ship(float pX, float pY, TextureRegion texture, VertexBufferObjectManager vertexBufferObjectManager, Scene mScene) {
+		super(pX, pY, texture, vertexBufferObjectManager);
 		body = PhysicsFactory.createCircleBody(GameScene.getInstance().getWorld(), this, BodyType.DynamicBody, ResourceManager.getInstance().FIXTURE_DEF_SHIP);
 
 		GameScene.getInstance().getWorld().registerPhysicsConnector(new PhysicsConnector(this, body, true, true));
 		this.scene = mScene;
-		this.animate(200);
-		
+		// this.animate(200);
+
 		this.currentCoordinatesX = pX;
 		this.currentCoordinatesY = pY;
-		this.setTexture(pTiledTextureRegion);
+		// this.setTexture(texture);
 		this.shootingCoolDown = new ShootingCoolDown(fireSpeed);
 		this.breakCoolDown = new MovementCoolDown(200);
+		this.registerAngleModifiers();
 
 		this.scene.registerTouchArea(this);
 		this.scene.attachChild(this);
@@ -84,7 +91,11 @@ public abstract class Ship extends AnimatedSprite {
 	public Vector2 getCoordinates() {
 		return new Vector2(this.getX(), this.getY());
 	}
-
+	
+	public Vector2 getCenterCoordinates() {
+		return new Vector2(this.getCoordinates().x + this.getWidth() / 2, this.getCoordinates().y + this.getHeight() / 2);
+	}
+	
 	protected void setCoordinates(Vector2 vector) {
 		this.currentCoordinatesX = vector.x;
 		this.currentCoordinatesY = vector.y;
@@ -146,9 +157,12 @@ public abstract class Ship extends AnimatedSprite {
 	}
 
 	private void fireBullet(Enemy mEnemy) {
-//		mEnemy.hit(damage);
-//		new Bullet(currentCoordinatesX, currentCoordinatesY, getTiledTextureRegion(), getVertexBufferObjectManager(), scene).fire(mEnemy.getMyCoordinates());
-//		GameScene.getInstance().addBulletToArray(new FighterBullet(this, mEnemy.getMyCoordinates(), scene));
+		// mEnemy.hit(damage);
+		// new Bullet(currentCoordinatesX, currentCoordinatesY,
+		// getTiledTextureRegion(), getVertexBufferObjectManager(),
+		// scene).fire(mEnemy.getMyCoordinates());
+		// GameScene.getInstance().addBulletToArray(new FighterBullet(this,
+		// mEnemy.getMyCoordinates(), scene));
 		GameScene.getInstance().addBulletToArray(new FighterBullet(this, mEnemy, scene));
 		this.playShot();
 	}
@@ -156,9 +170,9 @@ public abstract class Ship extends AnimatedSprite {
 	@SuppressWarnings("unused")
 	@Override
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		float currentX = pTouchAreaLocalX;
-		float currentY = pTouchAreaLocalY;
-//		drawDistance = true;
+		if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
+			drawDistance = !drawDistance;
+		}
 		return super.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
 	}
 
@@ -167,15 +181,42 @@ public abstract class Ship extends AnimatedSprite {
 		super.onManagedUpdate(pSecondsElapsed);
 		recalculateEnemiesDistances();
 		autoSlowBody();
-		if (drawDistance) {
-			drawDistanceRadius();
-		}
+		drawDistanceRadius(drawDistance);
 	}
-	
-	private void drawDistanceRadius() {
-		CircleShape circle = new CircleShape();
-		circle.setPosition(this.getCoordinates());
-		circle.setRadius(this.getFireDistance());
+
+	private void drawDistanceRadius(boolean res) {
+		if (res == true) {
+			if (isRadarDisplaying != true) {
+				radar = new LoopEntityModifier(new RotationModifier(1f, 0f, 360f));
+				radar_sprite = new Sprite(this.getCoordinates().x - ResourceManager.getInstance().radar_circle.getWidth() / 2, this.getCoordinates().y
+						- ResourceManager.getInstance().radar_circle.getHeight() / 2, ResourceManager.getInstance().radar_circle, ResourceManager.getInstance().getActivityReference()
+						.getVertexBufferObjectManager());
+				radar_sprite.setAlpha(0.3f);
+				radar_sprite.setScale(2f);
+				radar_sprite.setZIndex(1);
+				GameScene.getInstance().attachChild(radar_sprite);
+				radar_sprite.registerEntityModifier(radar);
+				isRadarDisplaying = true;
+			} else {
+				radar_sprite.setPosition(this.getCenterCoordinates().x - ResourceManager.getInstance().radar_circle.getWidth() / 2,
+						this.getCenterCoordinates().y - ResourceManager.getInstance().radar_circle.getHeight() / 2);
+			}
+		} else {
+			if (isRadarDisplaying == true) {
+				isRadarDisplaying = false;
+				radar_sprite.unregisterEntityModifier(radar);
+				ResourceManager.getInstance().getActivityReference().runOnUpdateThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						GameScene.getInstance().detachChild(radar_sprite);
+						radar_sprite = null;
+						radar = null;
+					}
+				});
+				
+			}
+		}
 	}
 
 	public void reactOnTouchWave(Vector2 waveVector) {
@@ -214,11 +255,11 @@ public abstract class Ship extends AnimatedSprite {
 	private void expReset() {
 		this.exp = 0;
 	}
-	
+
 	protected void increaseExp(long count) {
 		this.exp += count;
 	}
-	
+
 	protected int getCurrentLevel() {
 		return currentLevel;
 	}
@@ -227,13 +268,13 @@ public abstract class Ship extends AnimatedSprite {
 		this.shot = shot;
 		shot.setLooping(false);
 	}
-	
+
 	private void playShot() {
 		if (!shot.isPlaying()) {
 			shot.play();
 		}
 	}
-	
+
 	private void autoSlowBody() {
 		if ((body.getLinearVelocity().x != 0) || (body.getLinearVelocity().y != 0)) {
 			if (breakCoolDown.checkValidity()) {
@@ -250,5 +291,9 @@ public abstract class Ship extends AnimatedSprite {
 		}
 
 	}
-	
+
+	private void registerAngleModifiers() {
+		loop = new LoopEntityModifier(new RotationModifier(2f, 0, 360));
+		this.registerEntityModifier(loop);
+	}
 }

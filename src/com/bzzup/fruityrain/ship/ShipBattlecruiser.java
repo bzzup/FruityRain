@@ -7,7 +7,7 @@ import com.bzzup.fruityrain.ResourceManager;
 public class ShipBattlecruiser extends Ship {
 	
 	public ShipBattlecruiser(float x , float y, GameScene mScene) {
-		super(x, y, ResourceManager.getInstance().baloonEnemy, 
+		super(x, y, ResourceManager.getInstance().enemy_radiation, 
 				ResourceManager.getInstance().getActivityReference().getVertexBufferObjectManager(), 
 				mScene);
 		

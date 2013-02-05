@@ -59,7 +59,6 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		this.mWorld = new PhysicsWorld(new Vector2(0, 0), false);
 		this.setBackground(new Background(Color.BLACK));
 
-		// mWorld.setContactListener(mContactListener);
 		this.setOnSceneTouchListener(this);
 		setTouchAreaBindingOnActionDownEnabled(true);
 		setTouchAreaBindingOnActionMoveEnabled(true);
@@ -78,7 +77,8 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		final Rectangle roof = new Rectangle(0, 0, ResolutionManager.getInstance().getCameraWidth(), 5, vertexBufferObjectManager);
 		final Rectangle left = new Rectangle(0, 0, 5, ResolutionManager.getInstance().getCameraHeight(), vertexBufferObjectManager);
 		final Rectangle right_top = new Rectangle(ResolutionManager.getInstance().getCameraWidth() - 5, 0, 5, ResolutionManager.getInstance().getCameraHeight(), vertexBufferObjectManager);
-
+		final Rectangle right_middle = new Rectangle(ResolutionManager.getInstance().getCameraWidth() - 75, 0, 5, ResolutionManager.getInstance().getCameraHeight(), vertexBufferObjectManager);
+		
 		PhysicsFactory.createBoxBody(this.mWorld, ground, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL);
 		PhysicsFactory.createBoxBody(this.mWorld, roof, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL);
 		PhysicsFactory.createBoxBody(this.mWorld, left, BodyType.StaticBody, ResourceManager.getInstance().FIXTURE_DEF_WALL);
@@ -102,11 +102,11 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 		@Override
 		public void onUpdate(float pSecondsElapsed) {
 			updateHUD();
-			for (Enemy mEnemy : enemiesList) {
-				if (!mEnemy.isAlive()) {
-					mEnemy.detachSelf();
-				}
-			}
+//			for (Enemy mEnemy : enemiesList) {
+//				if (!mEnemy.isAlive()) {
+//					mEnemy.detachSelf();
+//				}
+//			}
 			for (Bullet mBullet : spriteBullets) {
 				if (!mBullet.isAlive()) {
 					mBullet.detachSelf();
@@ -116,27 +116,6 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 				GameScene.getInstance().detachChildren();
 				GameScene.getInstance().clearChildScene();
 			}
-//			ResourceManager.getInstance().getActivityReference().runOnUpdateThread(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					try {
-//						updateHUD();
-//						for (Enemy mEnemy : enemiesList) {
-//							if (!mEnemy.isAlive()) {
-//								mEnemy.detachSelf();
-//							}
-//						}
-//						for (Bullet mBullet : spriteBullets) {
-//							if (!mBullet.isAlive()) {
-//								mBullet.detachSelf();
-//							}
-//						}
-//					} catch (Exception ex) {
-//						ex.printStackTrace();
-//					}
-//				}
-//			});
 		}
 	};
 	
@@ -144,7 +123,6 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
 		if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
-//			new TouchWave(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
 			TouchWave.getInstance().showTouchArea(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
 		}
 		if (this.mWorld != null) {
@@ -188,14 +166,11 @@ public class GameScene extends Scene implements IOnSceneTouchListener, IUpdateHa
 	}
 
 	public void prepareSceneForPlay() {
+		Player.Money.addMoney(GameLevels.level1.getStartMoney());
 		addShip(300, 300, ShipDictionary.ShipTypes.FIGHTER);
-		// addShip(400, 400, ShipDictionary.ShipTypes.CRUISER);
-		// createEnemiesWithPeriod();
 		WaveController waveControl = new WaveController();
 		createWalls();
 		Road road = new Road();
-		// this.attachChild(choppaJoe.getAnimatedSprite());
-		// this.setChildScene(choppaJoeControlla.getAnalogOnScreenControl());
 		EngineOptionsManager.getInstance().getCamera().setHUD(gameHud.getHud());
 
 	}
